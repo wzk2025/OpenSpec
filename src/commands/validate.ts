@@ -96,10 +96,10 @@ export class ValidateCommand {
 
   private printNonInteractiveHint(): void {
     console.error('Nothing to validate. Try one of:');
-    console.error('  openspec validate --all');
-    console.error('  openspec validate --changes');
-    console.error('  openspec validate --specs');
-    console.error('  openspec validate <item-name>');
+    console.error('  rd validate --all');
+    console.error('  rd validate --changes');
+    console.error('  rd validate --specs');
+    console.error('  rd validate <item-name>');
     console.error('Or run in an interactive terminal.');
   }
 
@@ -120,7 +120,7 @@ export class ValidateCommand {
 
     if (!opts.typeOverride && isChange && isSpec) {
       console.error(`Ambiguous item '${itemName}' matches both a change and a spec.`);
-      console.error('Pass --type change|spec, or use: openspec change validate / openspec spec validate');
+      console.error('Pass --type change|spec, or use: rd change validate / rd spec validate');
       process.exitCode = 1;
       return;
     }

@@ -642,7 +642,7 @@ export function formatProjectMdMigrationHint(): string {
   lines.push('  • openspec/project.md');
   lines.push(chalk.dim('    We won\'t delete this file. It may contain useful project context.'));
   lines.push('');
-  lines.push(chalk.dim('    The new openspec/config.yaml has a "context:" section for planning'));
+  lines.push(chalk.dim('    The new .harness/spec/config.yaml has a "context:" section for planning'));
   lines.push(chalk.dim('    context. This is included in every OpenSpec request and works more'));
   lines.push(chalk.dim('    reliably than the old project.md approach.'));
   lines.push('');

@@ -45,7 +45,7 @@ export class ChangeCommand {
         } else {
           console.error(`No change specified. Available IDs: ${changes.join(', ')}`);
         }
-        console.error('Hint: use "openspec change list" to view available changes.');
+        console.error('Hint: use "rd change list" to view available changes.');
         process.exitCode = 1;
         return;
       }
@@ -202,7 +202,7 @@ export class ChangeCommand {
         } else {
           console.error(`No change specified. Available IDs: ${changes.join(', ')}`);
         }
-        console.error('Hint: use "openspec change list" to view available changes.');
+        console.error('Hint: use "rd change list" to view available changes.');
         process.exitCode = 1;
         return;
       }

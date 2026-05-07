@@ -64,7 +64,7 @@ ${commandList}
 
   case $state in
     command)
-      _describe "openspec command" commands
+      _describe "rd command" commands
       ;;
     args)
       case $words[1] in
