@@ -7,6 +7,9 @@
 **需要 Node.js >= 20.19.0**
 
 ```bash
+# 配置私有 registry
+echo "@fission-ai:registry=http://192.168.5.160/api/v4/groups/72/packages/npm/" >> ~/.npmrc
+
 # 安装
 npm install -g @fission-ai/openspec@latest
 
@@ -90,7 +93,7 @@ rd schema               # 管理工作流 schema
 ## 更新
 
 ```bash
-npm install -g @fission-ai/openspec@latest
+npm install -g @fission-ai/openspec@latest --registry=http://192.168.5.160/api/v4/groups/72/packages/npm/
 rd update
 ```
 
