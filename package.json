@@ -1,5 +1,5 @@
 {
-  "name": "@fission-ai/openspec",
+  "name": "@unios-ai/rd-spec",
   "version": "1.3.2",
   "description": "AI-native system for spec-driven development",
   "keywords": [
@@ -19,7 +19,7 @@
   "type": "module",
   "publishConfig": {
     "access": "restricted",
-    "registry": "http://192.168.5.160/api/v4/groups/72/packages/npm/"
+    "registry": "http://192.168.5.160/api/v4/groups/unios/packages/npm/"
   },
   "exports": {
     ".": {

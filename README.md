@@ -8,10 +8,10 @@
 
 ```bash
 # 配置私有 registry
-echo "@fission-ai:registry=http://192.168.5.160/api/v4/groups/72/packages/npm/" >> ~/.npmrc
+echo "@unios-ai:registry=http://192.168.5.160/api/v4/groups/unios/packages/npm/" >> ~/.npmrc
 
 # 安装
-npm install -g @fission-ai/openspec@latest
+npm install -g @unios-ai/rd-spec@latest
 
 # 在项目中初始化
 cd your-project
@@ -93,7 +93,7 @@ rd schema               # 管理工作流 schema
 ## 更新
 
 ```bash
-npm install -g @fission-ai/openspec@latest --registry=http://192.168.5.160/api/v4/groups/72/packages/npm/
+npm install -g @unios-ai/rd-spec@latest
 rd update
 ```
 
