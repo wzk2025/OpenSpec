@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import { runCLI } from '../helpers/run-cli.js';
 
 describe('top-level validate command', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-validate-command-tmp');
-  const changesDir = path.join(testDir, 'openspec', 'changes');
-  const specsDir = path.join(testDir, 'openspec', 'specs');
+  const changesDir = path.join(testDir, OPENSPEC_DIR_NAME, 'changes');
+  const specsDir = path.join(testDir, OPENSPEC_DIR_NAME, 'specs');
 
   beforeEach(async () => {
     await fs.mkdir(changesDir, { recursive: true });

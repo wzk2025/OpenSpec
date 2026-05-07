@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import { execSync } from 'child_process';
 
 describe('validate command enriched human output', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-validate-enriched-tmp');
-  const changesDir = path.join(testDir, 'openspec', 'changes');
+  const changesDir = path.join(testDir, OPENSPEC_DIR_NAME, 'changes');
   const bin = path.join(projectRoot, 'bin', 'openspec.js');
 
 

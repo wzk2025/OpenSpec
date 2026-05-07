@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { ChangeCommand } from '../../../src/commands/change.js';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../../src/core/config.js';
 import { promises as fs } from 'fs';
 import os from 'os';
 
@@ -13,7 +14,7 @@ describe('ChangeCommand.list', () => {
     cmd = new ChangeCommand();
     originalCwd = process.cwd();
     tempRoot = path.join(os.tmpdir(), `openspec-change-command-list-${Date.now()}`);
-    const changeDir = path.join(tempRoot, 'openspec', 'changes', 'demo');
+    const changeDir = path.join(tempRoot, OPENSPEC_DIR_NAME, 'changes', 'demo');
     await fs.mkdir(changeDir, { recursive: true });
     const proposal = `# Change: Demo\n\n## Why\nTest list.\n\n## What Changes\n- **auth:** Add requirement`;
     await fs.writeFile(path.join(changeDir, 'proposal.md'), proposal, 'utf-8');

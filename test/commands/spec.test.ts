@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import { execSync } from 'child_process';
 
 describe('spec command', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-spec-command-tmp');
-  const specsDir = path.join(testDir, 'openspec', 'specs');
+  const specsDir = path.join(testDir, OPENSPEC_DIR_NAME, 'specs');
   const openspecBin = path.join(projectRoot, 'bin', 'openspec.js');
   
   

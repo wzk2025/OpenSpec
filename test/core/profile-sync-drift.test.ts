@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import {
   hasProjectConfigDrift,
   WORKFLOW_TO_SKILL_DIR,
@@ -42,7 +43,7 @@ describe('profile sync drift detection', () => {
 
   beforeEach(() => {
     tempDir = path.join(os.tmpdir(), `openspec-profile-sync-drift-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, OPENSPEC_DIR_NAME), { recursive: true });
   });
 
   afterEach(() => {

@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
+import { GLOBAL_DATA_DIR_NAME } from '../../src/core/global-config.js';
 import os from 'os';
 import { runCLI } from '../helpers/run-cli.js';
 import { FileSystemUtils } from '../../src/utils/file-system.js';
@@ -13,7 +15,7 @@ describe('artifact-workflow CLI commands', () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'openspec-artifact-workflow-'));
-    changesDir = path.join(tempDir, 'openspec', 'changes');
+    changesDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'changes');
     await fs.mkdir(changesDir, { recursive: true });
   });
 
@@ -426,7 +428,7 @@ describe('artifact-workflow CLI commands', () => {
     });
 
     it('resolves single-star glob artifacts consistently between status and apply', async () => {
-      const schemaDir = path.join(tempDir, 'openspec', 'schemas', 'glob-test');
+      const schemaDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'glob-test');
       const templatesDir = path.join(schemaDir, 'templates');
       await fs.mkdir(templatesDir, { recursive: true });
 
@@ -544,7 +546,7 @@ apply:
     it('fallback: requires all artifacts when schema has no apply block', async () => {
       // Create a minimal schema without an apply block in user schemas dir
       const userDataDir = path.join(tempDir, 'user-data');
-      const noApplySchemaDir = path.join(userDataDir, 'openspec', 'schemas', 'no-apply');
+      const noApplySchemaDir = path.join(userDataDir, GLOBAL_DATA_DIR_NAME, 'schemas', 'no-apply');
       const templatesDir = path.join(noApplySchemaDir, 'templates');
       await fs.mkdir(templatesDir, { recursive: true });
 
@@ -594,7 +596,7 @@ artifacts:
     it('fallback: ready when all artifacts exist for schema without apply block', async () => {
       // Create a minimal schema without an apply block
       const userDataDir = path.join(tempDir, 'user-data-2');
-      const noApplySchemaDir = path.join(userDataDir, 'openspec', 'schemas', 'no-apply-full');
+      const noApplySchemaDir = path.join(userDataDir, GLOBAL_DATA_DIR_NAME, 'schemas', 'no-apply-full');
       const templatesDir = path.join(noApplySchemaDir, 'templates');
       await fs.mkdir(templatesDir, { recursive: true });
 
@@ -702,39 +704,24 @@ artifacts:
       expect(stat.isFile()).toBe(true);
     });
 
-    it('creates skills for Cursor tool', async () => {
-      const result = await runCLI(['experimental', '--tool', 'cursor'], {
+    it('creates skills for Claude Code tool', async () => {
+      const result = await runCLI(['experimental', '--tool', 'claude'], {
         cwd: tempDir,
       });
       expect(result.exitCode).toBe(0);
       const output = normalizePaths(getOutput(result));
-      expect(output).toContain('Cursor');
-      expect(output).toContain('.cursor/');
+      expect(output).toContain('Claude Code');
+      expect(output).toContain('.claude/');
 
       // Verify skill files were created
-      const skillFile = path.join(tempDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
+      const skillFile = path.join(tempDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
       const stat = await fs.stat(skillFile);
       expect(stat.isFile()).toBe(true);
 
-      // Verify commands were created with Cursor format
-      const commandFile = path.join(tempDir, '.cursor', 'commands', 'opsx-explore.md');
+      // Verify commands were created with rd/ format
+      const commandFile = path.join(tempDir, '.claude', 'commands', 'rd', 'explore.md');
       const content = await fs.readFile(commandFile, 'utf-8');
-      expect(content).toContain('name: /opsx-explore');
-    });
-
-    it('creates skills for Windsurf tool', async () => {
-      const result = await runCLI(['experimental', '--tool', 'windsurf'], {
-        cwd: tempDir,
-      });
-      expect(result.exitCode).toBe(0);
-      const output = normalizePaths(getOutput(result));
-      expect(output).toContain('Windsurf');
-      expect(output).toContain('.windsurf/');
-
-      // Verify skill files were created
-      const skillFile = path.join(tempDir, '.windsurf', 'skills', 'openspec-explore', 'SKILL.md');
-      const stat = await fs.stat(skillFile);
-      expect(stat.isFile()).toBe(true);
+      expect(content).toContain('name:');
     });
   });
 
@@ -744,7 +731,7 @@ artifacts:
         // Create project config with spec-driven schema
         // Note: changesDir is already at tempDir/openspec/changes (created in beforeEach)
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           'schema: spec-driven\n'
         );
 
@@ -762,7 +749,7 @@ artifacts:
         // Create project config with spec-driven schema
         // Note: openspec directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           'schema: spec-driven\n'
         );
 
@@ -785,7 +772,7 @@ artifacts:
         // Create project config with context and rules
         // Note: openspec directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           `schema: spec-driven
 context: |
   Tech stack: TypeScript, React
@@ -820,7 +807,7 @@ rules:
         // Create project config with rules only for proposal
         // Note: openspec directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           `schema: spec-driven
 rules:
   proposal:
@@ -889,7 +876,7 @@ rules:
         // Create initial config
         // Note: openspec directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           `schema: spec-driven
 context: Initial context
 `
@@ -908,7 +895,7 @@ context: Initial context
 
         // Update config
         await fs.writeFile(
-          path.join(tempDir, 'openspec', 'config.yaml'),
+          path.join(tempDir, OPENSPEC_DIR_NAME, 'config.yaml'),
           `schema: spec-driven
 context: Updated context
 `

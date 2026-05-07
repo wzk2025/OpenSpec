@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import { execSync } from 'child_process';
 
 // Note: We cannot truly simulate TTY prompts in this test runner easily.
@@ -9,7 +10,7 @@ import { execSync } from 'child_process';
 describe('change validate (interactive behavior)', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-change-validate-tmp');
-  const changesDir = path.join(testDir, 'openspec', 'changes');
+  const changesDir = path.join(testDir, OPENSPEC_DIR_NAME, 'changes');
   const bin = path.join(projectRoot, 'bin', 'openspec.js');
 
 

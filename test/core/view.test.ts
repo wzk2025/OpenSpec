@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import os from 'os';
 import { ViewCommand } from '../../src/core/view.js';
 
@@ -29,7 +30,7 @@ describe('ViewCommand', () => {
   });
 
   it('shows changes with no tasks in Draft section, not Completed', async () => {
-    const changesDir = path.join(tempDir, 'openspec', 'changes');
+    const changesDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'changes');
     await fs.mkdir(changesDir, { recursive: true });
 
     // Empty change (no tasks.md) - should show in Draft
@@ -79,7 +80,7 @@ describe('ViewCommand', () => {
   });
 
   it('sorts active changes by completion percentage ascending with deterministic tie-breakers', async () => {
-    const changesDir = path.join(tempDir, 'openspec', 'changes');
+    const changesDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'changes');
     await fs.mkdir(changesDir, { recursive: true });
 
     await fs.mkdir(path.join(changesDir, 'gamma-change'), { recursive: true });

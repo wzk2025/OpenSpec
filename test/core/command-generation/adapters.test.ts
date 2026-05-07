@@ -43,12 +43,12 @@ describe('command-generation/adapters', () => {
 
     it('should generate correct file path', () => {
       const filePath = claudeAdapter.getFilePath('explore');
-      expect(filePath).toBe(path.join('.claude', 'commands', 'opsx', 'explore.md'));
+      expect(filePath).toBe(path.join('.claude', 'commands', 'rd', 'explore.md'));
     });
 
     it('should generate correct file path for different command IDs', () => {
-      expect(claudeAdapter.getFilePath('new')).toBe(path.join('.claude', 'commands', 'opsx', 'new.md'));
-      expect(claudeAdapter.getFilePath('bulk-archive')).toBe(path.join('.claude', 'commands', 'opsx', 'bulk-archive.md'));
+      expect(claudeAdapter.getFilePath('new')).toBe(path.join('.claude', 'commands', 'rd', 'new.md'));
+      expect(claudeAdapter.getFilePath('bulk-archive')).toBe(path.join('.claude', 'commands', 'rd', 'bulk-archive.md'));
     });
 
     it('should format file with correct YAML frontmatter', () => {
@@ -212,13 +212,13 @@ describe('command-generation/adapters', () => {
     it('should transform colon command references to hyphen format', () => {
       const contentWithRefs: CommandContent = {
         ...sampleContent,
-        body: 'Run /opsx:apply to implement. Then use /opsx:verify.',
+        body: 'Run /rd:apply to implement. Then use /rd:verify.',
       };
       const output = bobAdapter.formatFile(contentWithRefs);
-      expect(output).toContain('/opsx-apply');
-      expect(output).toContain('/opsx-verify');
-      expect(output).not.toContain('/opsx:apply');
-      expect(output).not.toContain('/opsx:verify');
+      expect(output).toContain('/rd-apply');
+      expect(output).toContain('/rd-verify');
+      expect(output).not.toContain('/rd:apply');
+      expect(output).not.toContain('/rd:verify');
     });
 
     it('should escape YAML special characters in description', () => {
@@ -524,28 +524,28 @@ describe('command-generation/adapters', () => {
     it('should transform colon-based command references to hyphen-based', () => {
       const contentWithCommands: CommandContent = {
         ...sampleContent,
-        body: 'Use /opsx:new to start, then /opsx:apply to implement.',
+        body: 'Use /rd:new to start, then /rd:apply to implement.',
       };
       const output = opencodeAdapter.formatFile(contentWithCommands);
-      expect(output).toContain('/opsx-new');
-      expect(output).toContain('/opsx-apply');
-      expect(output).not.toContain('/opsx:new');
-      expect(output).not.toContain('/opsx:apply');
+      expect(output).toContain('/rd-new');
+      expect(output).toContain('/rd-apply');
+      expect(output).not.toContain('/rd:new');
+      expect(output).not.toContain('/rd:apply');
     });
 
     it('should handle multiple command references in body', () => {
       const contentWithMultipleCommands: CommandContent = {
         ...sampleContent,
-        body: `/opsx:explore for ideas
-/opsx:new to create
-/opsx:continue to proceed
-/opsx:apply to implement`,
+        body: `/rd:explore for ideas
+/rd:new to create
+/rd:continue to proceed
+/rd:apply to implement`,
       };
       const output = opencodeAdapter.formatFile(contentWithMultipleCommands);
-      expect(output).toContain('/opsx-explore');
-      expect(output).toContain('/opsx-new');
-      expect(output).toContain('/opsx-continue');
-      expect(output).toContain('/opsx-apply');
+      expect(output).toContain('/rd-explore');
+      expect(output).toContain('/rd-new');
+      expect(output).toContain('/rd-continue');
+      expect(output).toContain('/rd-apply');
     });
   });
 
@@ -616,13 +616,13 @@ describe('command-generation/adapters', () => {
     it('should transform command references from colon to hyphen format', () => {
       const contentWithRefs: CommandContent = {
         ...sampleContent,
-        body: 'Run /opsx:apply to implement. Then /opsx:archive when done.',
+        body: 'Run /rd:apply to implement. Then /rd:archive when done.',
       };
 
       const output = piAdapter.formatFile(contentWithRefs);
-      expect(output).toContain('/opsx-apply');
-      expect(output).toContain('/opsx-archive');
-      expect(output).not.toContain('/opsx:apply');
+      expect(output).toContain('/rd-apply');
+      expect(output).toContain('/rd-archive');
+      expect(output).not.toContain('/rd:apply');
     });
 
     it('should inject template arguments into the input section', () => {
@@ -678,7 +678,7 @@ describe('command-generation/adapters', () => {
       // path.join handles platform-specific separators
       const filePath = claudeAdapter.getFilePath('test');
       // On any platform, path.join returns the correct separator
-      expect(filePath.split(path.sep)).toEqual(['.claude', 'commands', 'opsx', 'test.md']);
+      expect(filePath.split(path.sep)).toEqual(['.claude', 'commands', 'rd', 'test.md']);
     });
 
     it('Cursor adapter uses path.join for paths', () => {

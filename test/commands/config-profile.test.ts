@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 vi.mock('@inquirer/prompts', () => ({
   select: vi.fn(),
   checkbox: vi.fn(),
@@ -83,14 +84,14 @@ describe('config profile interactive flow', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   function setupDriftedProjectArtifacts(projectDir: string): void {
-    fs.mkdirSync(path.join(projectDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(projectDir, OPENSPEC_DIR_NAME), { recursive: true });
     const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
     fs.mkdirSync(path.dirname(exploreSkillPath), { recursive: true });
     fs.writeFileSync(exploreSkillPath, 'name: openspec-explore\n', 'utf-8');
   }
 
   function setupSyncedCoreBothArtifacts(projectDir: string): void {
-    fs.mkdirSync(path.join(projectDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(projectDir, OPENSPEC_DIR_NAME), { recursive: true });
     const coreSkillDirs = [
       'openspec-propose',
       'openspec-explore',
@@ -105,7 +106,7 @@ describe('config profile interactive flow', () => {
 
     const coreCommands = ['propose', 'explore', 'apply', 'archive'];
     for (const commandId of coreCommands) {
-      const commandPath = path.join(projectDir, '.claude', 'commands', 'opsx', `${commandId}.md`);
+      const commandPath = path.join(projectDir, '.claude', 'commands', 'rd', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });
       fs.writeFileSync(commandPath, `# ${commandId}\n`, 'utf-8');
     }
@@ -116,7 +117,7 @@ describe('config profile interactive flow', () => {
     fs.mkdirSync(path.dirname(syncSkillPath), { recursive: true });
     fs.writeFileSync(syncSkillPath, 'name: openspec-sync-specs\n', 'utf-8');
 
-    const syncCommandPath = path.join(projectDir, '.claude', 'commands', 'opsx', 'sync.md');
+    const syncCommandPath = path.join(projectDir, '.claude', 'commands', 'rd', 'sync.md');
     fs.mkdirSync(path.dirname(syncCommandPath), { recursive: true });
     fs.writeFileSync(syncCommandPath, '# sync\n', 'utf-8');
   }
@@ -274,7 +275,7 @@ describe('config profile interactive flow', () => {
     const configPath = getGlobalConfigPath();
     const beforeContent = fs.readFileSync(configPath, 'utf-8');
 
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, OPENSPEC_DIR_NAME), { recursive: true });
     select.mockResolvedValueOnce('delivery');
     select.mockResolvedValueOnce('both');
 
@@ -350,7 +351,7 @@ describe('config profile interactive flow', () => {
     const { select, confirm } = await getPromptMocks();
 
     saveGlobalConfig({ featureFlags: {}, profile: 'core', delivery: 'both', workflows: ['propose', 'explore', 'apply', 'archive'] });
-    fs.mkdirSync(path.join(tempDir, 'openspec'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, OPENSPEC_DIR_NAME), { recursive: true });
 
     select.mockResolvedValueOnce('delivery');
     select.mockResolvedValueOnce('skills');

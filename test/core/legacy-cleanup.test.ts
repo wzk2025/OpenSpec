@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import os from 'os';
 import { randomUUID } from 'crypto';
 import {
@@ -29,7 +30,7 @@ describe('legacy-cleanup', () => {
     testDir = path.join(os.tmpdir(), `openspec-legacy-test-${randomUUID()}`);
     await fs.mkdir(testDir, { recursive: true });
     // Create openspec directory structure
-    await fs.mkdir(path.join(testDir, 'openspec'), { recursive: true });
+    await fs.mkdir(path.join(testDir, OPENSPEC_DIR_NAME), { recursive: true });
   });
 
   afterEach(async () => {
@@ -368,7 +369,7 @@ ${OPENSPEC_MARKERS.end}`);
 
   describe('detectLegacyStructureFiles', () => {
     it('should detect openspec/AGENTS.md', async () => {
-      const agentsPath = path.join(testDir, 'openspec', 'AGENTS.md');
+      const agentsPath = path.join(testDir, OPENSPEC_DIR_NAME, 'AGENTS.md');
       await fs.writeFile(agentsPath, '# AGENTS.md content');
 
       const result = await detectLegacyStructureFiles(testDir);
@@ -376,7 +377,7 @@ ${OPENSPEC_MARKERS.end}`);
     });
 
     it('should detect openspec/project.md', async () => {
-      const projectPath = path.join(testDir, 'openspec', 'project.md');
+      const projectPath = path.join(testDir, OPENSPEC_DIR_NAME, 'project.md');
       await fs.writeFile(projectPath, '# Project content');
 
       const result = await detectLegacyStructureFiles(testDir);
@@ -432,7 +433,7 @@ ${OPENSPEC_MARKERS.end}`);
     });
 
     it('should return hasLegacyArtifacts: true when openspec/AGENTS.md is found', async () => {
-      await fs.writeFile(path.join(testDir, 'openspec', 'AGENTS.md'), 'content');
+      await fs.writeFile(path.join(testDir, OPENSPEC_DIR_NAME, 'AGENTS.md'), 'content');
 
       const result = await detectLegacyArtifacts(testDir);
       expect(result.hasLegacyArtifacts).toBe(true);
@@ -440,7 +441,7 @@ ${OPENSPEC_MARKERS.end}`);
     });
 
     it('should detect project.md for migration hint (it is preserved, not deleted)', async () => {
-      await fs.writeFile(path.join(testDir, 'openspec', 'project.md'), 'content');
+      await fs.writeFile(path.join(testDir, OPENSPEC_DIR_NAME, 'project.md'), 'content');
 
       const result = await detectLegacyArtifacts(testDir);
       // project.md triggers hasLegacyArtifacts to show migration hint
@@ -452,8 +453,8 @@ ${OPENSPEC_MARKERS.end}`);
       // Create various legacy artifacts
       await fs.writeFile(path.join(testDir, 'CLAUDE.md'), `${OPENSPEC_MARKERS.start}\nContent\n${OPENSPEC_MARKERS.end}`);
       await fs.mkdir(path.join(testDir, '.claude', 'commands', 'openspec'), { recursive: true });
-      await fs.writeFile(path.join(testDir, 'openspec', 'AGENTS.md'), 'content');
-      await fs.writeFile(path.join(testDir, 'openspec', 'project.md'), 'content');
+      await fs.writeFile(path.join(testDir, OPENSPEC_DIR_NAME, 'AGENTS.md'), 'content');
+      await fs.writeFile(path.join(testDir, OPENSPEC_DIR_NAME, 'project.md'), 'content');
 
       const result = await detectLegacyArtifacts(testDir);
       expect(result.hasLegacyArtifacts).toBe(true);
@@ -527,7 +528,7 @@ ${OPENSPEC_MARKERS.end}`);
     });
 
     it('should delete openspec/AGENTS.md', async () => {
-      const agentsPath = path.join(testDir, 'openspec', 'AGENTS.md');
+      const agentsPath = path.join(testDir, OPENSPEC_DIR_NAME, 'AGENTS.md');
       await fs.writeFile(agentsPath, 'content');
 
       const detection = await detectLegacyArtifacts(testDir);
@@ -536,11 +537,11 @@ ${OPENSPEC_MARKERS.end}`);
       expect(result.deletedFiles).toContain('openspec/AGENTS.md');
       await expect(fs.access(agentsPath)).rejects.toThrow();
       // openspec directory should still exist
-      await expect(fs.access(path.join(testDir, 'openspec'))).resolves.not.toThrow();
+      await expect(fs.access(path.join(testDir, OPENSPEC_DIR_NAME))).resolves.not.toThrow();
     });
 
     it('should NOT delete openspec/project.md', async () => {
-      const projectPath = path.join(testDir, 'openspec', 'project.md');
+      const projectPath = path.join(testDir, OPENSPEC_DIR_NAME, 'project.md');
       await fs.writeFile(projectPath, 'User project content');
 
       const detection = await detectLegacyArtifacts(testDir);
@@ -931,13 +932,11 @@ ${OPENSPEC_MARKERS.end}`);
       });
     });
 
-    it('should only include legacy tool IDs that are present in the CommandAdapterRegistry', () => {
-      const registeredTools = new Set(CommandAdapterRegistry.getAll().map(adapter => adapter.toolId));
-
-      // Verify all legacy map entries correspond to known adapters
-      for (const tool of Object.keys(LEGACY_SLASH_COMMAND_PATHS)) {
-        expect(registeredTools.has(tool)).toBe(true);
-      }
+    it('should include legacy paths for tools that may have pre-1.0 artifacts', () => {
+      // Legacy cleanup paths cover all tools that could have pre-1.0 artifacts
+      // Not all need to be in the current registry (which only has claude)
+      expect(Object.keys(LEGACY_SLASH_COMMAND_PATHS).length).toBeGreaterThan(0);
+      expect(LEGACY_SLASH_COMMAND_PATHS).toHaveProperty('claude');
 
       // Pi was never a pre-1.0 legacy tool
       expect(LEGACY_SLASH_COMMAND_PATHS).not.toHaveProperty('pi');

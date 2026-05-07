@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 import os from 'os';
 import { InitCommand } from '../../src/core/init.js';
 import { saveGlobalConfig, getGlobalConfig } from '../../src/core/global-config.js';
@@ -58,7 +59,7 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const openspecPath = path.join(testDir, 'openspec');
+      const openspecPath = path.join(testDir, OPENSPEC_DIR_NAME);
       expect(await directoryExists(openspecPath)).toBe(true);
       expect(await directoryExists(path.join(openspecPath, 'specs'))).toBe(true);
       expect(await directoryExists(path.join(openspecPath, 'changes'))).toBe(true);
@@ -70,7 +71,7 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      const configPath = path.join(testDir, 'openspec', 'config.yaml');
+      const configPath = path.join(testDir, OPENSPEC_DIR_NAME, 'config.yaml');
       expect(await fileExists(configPath)).toBe(true);
 
       const content = await fs.readFile(configPath, 'utf-8');
@@ -123,10 +124,10 @@ describe('InitCommand', () => {
 
       // Core profile: propose, explore, apply, archive
       const coreCommandNames = [
-        'opsx/propose.md',
-        'opsx/explore.md',
-        'opsx/apply.md',
-        'opsx/archive.md',
+        'rd/propose.md',
+        'rd/explore.md',
+        'rd/apply.md',
+        'rd/archive.md',
       ];
 
       for (const cmdName of coreCommandNames) {
@@ -136,12 +137,12 @@ describe('InitCommand', () => {
 
       // Non-core commands should NOT be created
       const nonCoreCommandNames = [
-        'opsx/new.md',
-        'opsx/continue.md',
-        'opsx/ff.md',
-        'opsx/sync.md',
-        'opsx/bulk-archive.md',
-        'opsx/verify.md',
+        'rd/new.md',
+        'rd/continue.md',
+        'rd/ff.md',
+        'rd/sync.md',
+        'rd/bulk-archive.md',
+        'rd/verify.md',
       ];
 
       for (const cmdName of nonCoreCommandNames) {
@@ -150,34 +151,35 @@ describe('InitCommand', () => {
       }
     });
 
-    it('should create skills in Cursor skills directory', async () => {
-      const initCommand = new InitCommand({ tools: 'cursor', force: true });
+    it('should create skills in Claude skills directory', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
     });
 
-    it('should create skills in Windsurf skills directory', async () => {
-      const initCommand = new InitCommand({ tools: 'windsurf', force: true });
+    it('should create skills in Claude Code skills directory with explicit flag', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      const skillFile = path.join(testDir, '.windsurf', 'skills', 'openspec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
       expect(await fileExists(skillFile)).toBe(true);
+
+      const proposeSkill = path.join(testDir, '.claude', 'skills', 'openspec-propose', 'SKILL.md');
+      expect(await fileExists(proposeSkill)).toBe(true);
     });
 
-    it('should create skills for multiple tools at once', async () => {
-      const initCommand = new InitCommand({ tools: 'claude,cursor', force: true });
+    it('should create skills for claude tool', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
     });
 
     it('should select all tools with --tools all option', async () => {
@@ -185,14 +187,10 @@ describe('InitCommand', () => {
 
       await initCommand.execute(testDir);
 
-      // Check a few representative tools
+      // Check that the only available tool (claude) gets skills
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
-      const windsurfSkill = path.join(testDir, '.windsurf', 'skills', 'openspec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
-      expect(await fileExists(windsurfSkill)).toBe(true);
     });
 
     it('should skip tool configuration with --tools none option', async () => {
@@ -201,7 +199,7 @@ describe('InitCommand', () => {
       await initCommand.execute(testDir);
 
       // Should create OpenSpec structure but no skills
-      const openspecPath = path.join(testDir, 'openspec');
+      const openspecPath = path.join(testDir, OPENSPEC_DIR_NAME);
       expect(await directoryExists(openspecPath)).toBe(true);
 
       // No tool-specific directories should be created
@@ -216,15 +214,13 @@ describe('InitCommand', () => {
     });
 
     it('should handle comma-separated tool names with spaces', async () => {
-      const initCommand = new InitCommand({ tools: 'claude, cursor', force: true });
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
     });
 
     it('should reject combining reserved keywords with explicit tool ids', async () => {
@@ -237,7 +233,7 @@ describe('InitCommand', () => {
 
     it('should not create config.yaml if it already exists', async () => {
       // Pre-create config.yaml
-      const openspecDir = path.join(testDir, 'openspec');
+      const openspecDir = path.join(testDir, OPENSPEC_DIR_NAME);
       await fs.mkdir(openspecDir, { recursive: true });
       const configPath = path.join(openspecDir, 'config.yaml');
       const existingContent = 'schema: custom-schema\n';
@@ -256,7 +252,7 @@ describe('InitCommand', () => {
 
       await initCommand.execute(newDir);
 
-      const openspecPath = path.join(newDir, 'openspec');
+      const openspecPath = path.join(newDir, OPENSPEC_DIR_NAME);
       expect(await directoryExists(openspecPath)).toBe(true);
     });
 
@@ -264,16 +260,14 @@ describe('InitCommand', () => {
       const initCommand1 = new InitCommand({ tools: 'claude', force: true });
       await initCommand1.execute(testDir);
 
-      // Run init again with a different tool
-      const initCommand2 = new InitCommand({ tools: 'cursor', force: true });
+      // Run init again with the same tool
+      const initCommand2 = new InitCommand({ tools: 'claude', force: true });
       await initCommand2.execute(testDir);
 
-      // Both tools should have skills
+      // Tool should still have skills
       const claudeSkill = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
-      const cursorSkill = path.join(testDir, '.cursor', 'skills', 'openspec-explore', 'SKILL.md');
 
       expect(await fileExists(claudeSkill)).toBe(true);
-      expect(await fileExists(cursorSkill)).toBe(true);
     });
 
     it('should refresh skills on re-run for the same tool', async () => {
@@ -361,7 +355,7 @@ describe('InitCommand', () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const cmdFile = path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md');
+      const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
       const content = await fs.readFile(cmdFile, 'utf-8');
 
       // Claude commands use YAML frontmatter
@@ -370,11 +364,11 @@ describe('InitCommand', () => {
       expect(content).toContain('description:');
     });
 
-    it('should generate Cursor commands with correct format', async () => {
-      const initCommand = new InitCommand({ tools: 'cursor', force: true });
+    it('should generate Claude Code commands with rd/ directory', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const cmdFile = path.join(testDir, '.cursor', 'commands', 'opsx-explore.md');
+      const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
       expect(await fileExists(cmdFile)).toBe(true);
 
       const content = await fs.readFile(cmdFile, 'utf-8');
@@ -413,52 +407,45 @@ describe('InitCommand', () => {
   });
 
   describe('tool-specific adapters', () => {
-    it('should generate Gemini CLI commands as TOML files', async () => {
-      const initCommand = new InitCommand({ tools: 'gemini', force: true });
+    it('should generate Claude Code commands as Markdown files in rd/', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const cmdFile = path.join(testDir, '.gemini', 'commands', 'opsx', 'explore.toml');
+      const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
       expect(await fileExists(cmdFile)).toBe(true);
 
       const content = await fs.readFile(cmdFile, 'utf-8');
-      expect(content).toContain('description =');
-      expect(content).toContain('prompt =');
+      expect(content).toContain('name:');
+      expect(content).toContain('description:');
     });
 
-    it('should generate Windsurf commands', async () => {
-      const initCommand = new InitCommand({ tools: 'windsurf', force: true });
+    it('should generate Claude Code skill files with proper frontmatter', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const cmdFile = path.join(testDir, '.windsurf', 'workflows', 'opsx-explore.md');
-      expect(await fileExists(cmdFile)).toBe(true);
+      const skillFile = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
+      expect(await fileExists(skillFile)).toBe(true);
+
+      const content = await fs.readFile(skillFile, 'utf-8');
+      expect(content).toContain('name: openspec-explore');
+      expect(content).toContain('description:');
     });
 
-    it('should generate Continue prompt files', async () => {
-      const initCommand = new InitCommand({ tools: 'continue', force: true });
+    it('should generate all core skills for Claude Code', async () => {
+      const initCommand = new InitCommand({ tools: 'claude', force: true });
       await initCommand.execute(testDir);
 
-      const cmdFile = path.join(testDir, '.continue', 'prompts', 'opsx-explore.prompt');
-      expect(await fileExists(cmdFile)).toBe(true);
+      const coreSkills = [
+        'openspec-explore',
+        'openspec-propose',
+        'openspec-apply-change',
+        'openspec-archive-change',
+      ];
 
-      const content = await fs.readFile(cmdFile, 'utf-8');
-      expect(content).toContain('name: opsx-explore');
-      expect(content).toContain('invokable: true');
-    });
-
-    it('should generate Cline workflow files', async () => {
-      const initCommand = new InitCommand({ tools: 'cline', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.clinerules', 'workflows', 'opsx-explore.md');
-      expect(await fileExists(cmdFile)).toBe(true);
-    });
-
-    it('should generate GitHub Copilot prompt files', async () => {
-      const initCommand = new InitCommand({ tools: 'github-copilot', force: true });
-      await initCommand.execute(testDir);
-
-      const cmdFile = path.join(testDir, '.github', 'prompts', 'opsx-explore.prompt.md');
-      expect(await fileExists(cmdFile)).toBe(true);
+      for (const skillName of coreSkills) {
+        const skillFile = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
+        expect(await fileExists(skillFile)).toBe(true);
+      }
     });
   });
 });
@@ -537,35 +524,31 @@ describe('InitCommand - profile and detection features', () => {
   });
 
   it('should auto-cleanup legacy artifacts in non-interactive mode without --force', async () => {
-    // Create legacy OpenCode command files (singular 'command' path)
-    const legacyDir = path.join(testDir, '.opencode', 'command');
+    // Create legacy Claude command files (old openspec directory)
+    const legacyDir = path.join(testDir, '.claude', 'commands', 'openspec');
     await fs.mkdir(legacyDir, { recursive: true });
-    await fs.writeFile(path.join(legacyDir, 'opsx-propose.md'), 'legacy content');
+    await fs.writeFile(path.join(legacyDir, 'explore.md'), 'legacy content');
 
     // Run init in non-interactive mode without --force
-    const initCommand = new InitCommand({ tools: 'opencode' });
+    const initCommand = new InitCommand({ tools: 'claude' });
     await initCommand.execute(testDir);
 
-    // Legacy files should be cleaned up automatically
-    expect(await fileExists(path.join(legacyDir, 'opsx-propose.md'))).toBe(false);
+    // Legacy opsx directory should be cleaned up
+    expect(await fileExists(path.join(legacyDir, 'explore.md'))).toBe(false);
 
-    // New commands should be at the correct plural path
-    const newCommandsDir = path.join(testDir, '.opencode', 'commands');
+    // New commands should be at rd/ path
+    const newCommandsDir = path.join(testDir, '.claude', 'commands', 'rd');
     expect(await directoryExists(newCommandsDir)).toBe(true);
   });
 
   it('should preselect configured tools but not directory-detected tools in extend mode', async () => {
     // Simulate existing OpenSpec project (extend mode).
-    await fs.mkdir(path.join(testDir, 'openspec'), { recursive: true });
+    await fs.mkdir(path.join(testDir, OPENSPEC_DIR_NAME), { recursive: true });
 
     // Configured with OpenSpec
     const claudeSkillDir = path.join(testDir, '.claude', 'skills', 'openspec-explore');
     await fs.mkdir(claudeSkillDir, { recursive: true });
     await fs.writeFile(path.join(claudeSkillDir, 'SKILL.md'), 'configured');
-
-    // Directory detected only (not configured with OpenSpec)
-    await fs.mkdir(path.join(testDir, '.github'), { recursive: true });
-    await fs.writeFile(path.join(testDir, '.github', 'copilot-instructions.md'), '');
 
     searchableMultiSelectMock.mockResolvedValue(['claude']);
 
@@ -578,19 +561,13 @@ describe('InitCommand - profile and detection features', () => {
     const [{ choices }] = searchableMultiSelectMock.mock.calls[0] as [{ choices: Array<{ value: string; preSelected?: boolean; detected?: boolean }> }];
 
     const claude = choices.find((choice) => choice.value === 'claude');
-    const githubCopilot = choices.find((choice) => choice.value === 'github-copilot');
 
     expect(claude?.preSelected).toBe(true);
-    expect(githubCopilot?.preSelected).toBe(false);
-    expect(githubCopilot?.detected).toBe(true);
   });
 
   it('should preselect detected tools for first-time interactive setup', async () => {
-    // First-time init: no openspec/ directory and no configured OpenSpec skills.
-    await fs.mkdir(path.join(testDir, '.github'), { recursive: true });
-    await fs.writeFile(path.join(testDir, '.github', 'copilot-instructions.md'), '');
-
-    searchableMultiSelectMock.mockResolvedValue(['github-copilot']);
+    // First-time init: no .harness/spec/ directory
+    searchableMultiSelectMock.mockResolvedValue(['claude']);
 
     const initCommand = new InitCommand({ force: true });
     vi.spyOn(initCommand as any, 'canPromptInteractively').mockReturnValue(true);
@@ -599,9 +576,9 @@ describe('InitCommand - profile and detection features', () => {
 
     expect(searchableMultiSelectMock).toHaveBeenCalledTimes(1);
     const [{ choices }] = searchableMultiSelectMock.mock.calls[0] as [{ choices: Array<{ value: string; preSelected?: boolean }> }];
-    const githubCopilot = choices.find((choice) => choice.value === 'github-copilot');
+    const claude = choices.find((choice) => choice.value === 'claude');
 
-    expect(githubCopilot?.preSelected).toBe(true);
+    expect(claude?.preSelected).toBe(false);
   });
 
   it('should respect custom profile from global config', async () => {
@@ -627,9 +604,9 @@ describe('InitCommand - profile and detection features', () => {
   });
 
   it('should migrate commands-only extend mode to custom profile without injecting propose', async () => {
-    await fs.mkdir(path.join(testDir, 'openspec'), { recursive: true });
-    await fs.mkdir(path.join(testDir, '.claude', 'commands', 'opsx'), { recursive: true });
-    await fs.writeFile(path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md'), '# explore\n');
+    await fs.mkdir(path.join(testDir, OPENSPEC_DIR_NAME), { recursive: true });
+    await fs.mkdir(path.join(testDir, '.claude', 'commands', 'rd'), { recursive: true });
+    await fs.writeFile(path.join(testDir, '.claude', 'commands', 'rd', 'explore.md'), '# explore\n');
 
     const initCommand = new InitCommand({ tools: 'claude', force: true });
     await initCommand.execute(testDir);
@@ -639,8 +616,8 @@ describe('InitCommand - profile and detection features', () => {
     expect(config.delivery).toBe('commands');
     expect(config.workflows).toEqual(['explore']);
 
-    const exploreCommand = path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md');
-    const proposeCommand = path.join(testDir, '.claude', 'commands', 'opsx', 'propose.md');
+    const exploreCommand = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
+    const proposeCommand = path.join(testDir, '.claude', 'commands', 'rd', 'propose.md');
     expect(await fileExists(exploreCommand)).toBe(true);
     expect(await fileExists(proposeCommand)).toBe(false);
 
@@ -691,7 +668,7 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(skillFile)).toBe(true);
 
     // Commands should NOT exist
-    const cmdFile = path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md');
+    const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
     expect(await fileExists(cmdFile)).toBe(false);
   });
 
@@ -710,7 +687,7 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(skillFile)).toBe(false);
 
     // Commands should exist
-    const cmdFile = path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md');
+    const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
     expect(await fileExists(cmdFile)).toBe(true);
   });
 
@@ -724,7 +701,7 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand1 = new InitCommand({ tools: 'claude', force: true });
     await initCommand1.execute(testDir);
 
-    const cmdFile = path.join(testDir, '.claude', 'commands', 'opsx', 'explore.md');
+    const cmdFile = path.join(testDir, '.claude', 'commands', 'rd', 'explore.md');
     expect(await fileExists(cmdFile)).toBe(true);
 
     saveGlobalConfig({

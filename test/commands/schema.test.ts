@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 
+import { OPENSPEC_DIR_NAME } from '../../src/core/config.js';
 describe('schema command', () => {
   let tempDir: string;
   let originalCwd: string;
@@ -19,7 +20,7 @@ describe('schema command', () => {
     fs.mkdirSync(tempDir, { recursive: true });
 
     // Create openspec directory structure
-    fs.mkdirSync(path.join(tempDir, 'openspec', 'schemas'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas'), { recursive: true });
 
     // Save original cwd and env
     originalCwd = process.cwd();
@@ -70,7 +71,7 @@ describe('schema command', () => {
 
     it('should detect project schema shadowing package', async () => {
       // Create a project-local spec-driven schema
-      const projectSchemaDir = path.join(tempDir, 'openspec', 'schemas', 'spec-driven');
+      const projectSchemaDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'spec-driven');
       fs.mkdirSync(projectSchemaDir, { recursive: true });
       fs.writeFileSync(
         path.join(projectSchemaDir, 'schema.yaml'),
@@ -105,7 +106,7 @@ artifacts:
   describe('schema validate', () => {
     it('should validate a valid schema', async () => {
       // Create a valid project schema
-      const schemaDir = path.join(tempDir, 'openspec', 'schemas', 'test-schema');
+      const schemaDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'test-schema');
       fs.mkdirSync(schemaDir, { recursive: true });
       fs.writeFileSync(
         path.join(schemaDir, 'schema.yaml'),
@@ -130,7 +131,7 @@ artifacts:
     });
 
     it('should detect missing template file', async () => {
-      const schemaDir = path.join(tempDir, 'openspec', 'schemas', 'bad-schema');
+      const schemaDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'bad-schema');
       fs.mkdirSync(schemaDir, { recursive: true });
       fs.writeFileSync(
         path.join(schemaDir, 'schema.yaml'),
@@ -208,7 +209,7 @@ artifacts:
       expect(sourceDir).not.toBeNull();
 
       // Copy manually to simulate fork
-      const destDir = path.join(tempDir, 'openspec', 'schemas', 'my-custom');
+      const destDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'my-custom');
       fs.mkdirSync(destDir, { recursive: true });
 
       // Copy files
@@ -246,7 +247,7 @@ artifacts:
 
   describe('schema init', () => {
     it('should create schema directory with schema.yaml', async () => {
-      const schemaDir = path.join(tempDir, 'openspec', 'schemas', 'new-schema');
+      const schemaDir = path.join(tempDir, OPENSPEC_DIR_NAME, 'schemas', 'new-schema');
       fs.mkdirSync(schemaDir, { recursive: true });
 
       const { stringify: stringifyYaml } = await import('yaml');
