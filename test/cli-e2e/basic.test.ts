@@ -54,7 +54,7 @@ describe('openspec CLI e2e basics', () => {
       .join(', ');
     const normalizedOutput = result.stdout.replace(/\s+/g, ' ').trim();
     expect(normalizedOutput).toContain(
-      `Use "all", "none", or a comma-separated list of: ${expectedTools}`
+      `使用 "all"、"none" 或逗号分隔列表: ${expectedTools}`
     );
   });
 

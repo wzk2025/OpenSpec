@@ -9,244 +9,244 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'openspec-bulk-archive-change',
-    description: 'Archive multiple completed changes at once. Use when archiving several parallel changes.',
-    instructions: `Archive multiple completed changes in a single operation.
+    description: '批量归档已完成的变更。适用于归档多个并行变更。',
+    instructions: `批量归档多个已完成的变更。
 
-This skill allows you to batch-archive changes, handling spec conflicts intelligently by checking the codebase to determine what's actually implemented.
+此技能允许你批量归档变更，通过检查代码库确定实际已实现的内容，智能地处理规格冲突。
 
-**Input**: None required (prompts for selection)
+**输入**：无需输入（提示选择）
 
-**Steps**
+**步骤**
 
-1. **Get active changes**
+1. **获取活跃变更**
 
-   Run \`openspec list --json\` to get all active changes.
+   运行 \`rd list --json\` 获取所有活跃变更。
 
-   If no active changes exist, inform user and stop.
+   如果没有活跃变更，通知用户并停止。
 
-2. **Prompt for change selection**
+2. **提示选择变更**
 
-   Use **AskUserQuestion tool** with multi-select to let user choose changes:
-   - Show each change with its schema
-   - Include an option for "All changes"
-   - Allow any number of selections (1+ works, 2+ is the typical use case)
+   使用 **AskUserQuestion 工具** 的多选功能让用户选择变更：
+   - 显示每个变更及其 schema
+   - 包含"所有变更"选项
+   - 允许任意数量的选择（1 个以上即可，2 个以上是典型用例）
 
-   **IMPORTANT**: Do NOT auto-select. Always let the user choose.
+   **重要提示**：不要自动选择。始终让用户选择。
 
-3. **Batch validation - gather status for all selected changes**
+3. **批量验证 - 收集所有选中变更的状态**
 
-   For each selected change, collect:
+   对于每个选中的变更，收集：
 
-   a. **Artifact status** - Run \`openspec status --change "<name>" --json\`
-      - Parse \`schemaName\` and \`artifacts\` list
-      - Note which artifacts are \`done\` vs other states
+   a. **制品状态** - 运行 \`rd status --change "<name>" --json\`
+      - 解析 \`schemaName\` 和 \`artifacts\` 列表
+      - 记录哪些制品是 \`done\`，哪些是其他状态
 
-   b. **Task completion** - Read \`openspec/changes/<name>/tasks.md\`
-      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete)
-      - If no tasks file exists, note as "No tasks"
+   b. **任务完成情况** - 读取 \`openspec/changes/<name>/tasks.md\`
+      - 统计 \`- [ ]\`（未完成）和 \`- [x]\`（已完成）的数量
+      - 如果不存在任务文件，记录为"无任务"
 
-   c. **Delta specs** - Check \`openspec/changes/<name>/specs/\` directory
-      - List which capability specs exist
-      - For each, extract requirement names (lines matching \`### Requirement: <name>\`)
+   c. **增量规格** - 检查 \`openspec/changes/<name>/specs/\` 目录
+      - 列出存在哪些 capability 规格
+      - 对于每个规格，提取需求名称（匹配 \`### Requirement: <name>\` 的行）
 
-4. **Detect spec conflicts**
+4. **检测规格冲突**
 
-   Build a map of \`capability -> [changes that touch it]\`:
-
-   \`\`\`
-   auth -> [change-a, change-b]  <- CONFLICT (2+ changes)
-   api  -> [change-c]            <- OK (only 1 change)
-   \`\`\`
-
-   A conflict exists when 2+ selected changes have delta specs for the same capability.
-
-5. **Resolve conflicts agentically**
-
-   **For each conflict**, investigate the codebase:
-
-   a. **Read the delta specs** from each conflicting change to understand what each claims to add/modify
-
-   b. **Search the codebase** for implementation evidence:
-      - Look for code implementing requirements from each delta spec
-      - Check for related files, functions, or tests
-
-   c. **Determine resolution**:
-      - If only one change is actually implemented -> sync that one's specs
-      - If both implemented -> apply in chronological order (older first, newer overwrites)
-      - If neither implemented -> skip spec sync, warn user
-
-   d. **Record resolution** for each conflict:
-      - Which change's specs to apply
-      - In what order (if both)
-      - Rationale (what was found in codebase)
-
-6. **Show consolidated status table**
-
-   Display a table summarizing all changes:
+   构建 \`capability -> [涉及该 capability 的变更]\` 的映射：
 
    \`\`\`
-   | Change              | Artifacts | Tasks | Specs   | Conflicts | Status |
-   |---------------------|-----------|-------|---------|-----------|--------|
-   | schema-management   | Done      | 5/5   | 2 delta | None      | Ready  |
-   | project-config      | Done      | 3/3   | 1 delta | None      | Ready  |
-   | add-oauth           | Done      | 4/4   | 1 delta | auth (!)  | Ready* |
-   | add-verify-skill    | 1 left    | 2/5   | None    | None      | Warn   |
+   auth -> [change-a, change-b]  <- 冲突（2 个以上变更）
+   api  -> [change-c]            <- 正常（仅 1 个变更）
    \`\`\`
 
-   For conflicts, show the resolution:
+   当 2 个或更多选中的变更具有相同 capability 的增量规格时，即存在冲突。
+
+5. **智能解决冲突**
+
+   **对于每个冲突**，调查代码库：
+
+   a. **读取增量规格**，从每个冲突变更中了解各自声称要添加/修改的内容
+
+   b. **搜索代码库**，查找实现证据：
+      - 查找实现每个增量规格需求的代码
+      - 检查相关文件、函数或测试
+
+   c. **确定解决方案**：
+      - 如果只有一个变更已实现 -> 同步该变更的规格
+      - 如果两个都已实现 -> 按时间顺序应用（先旧的，新的覆盖）
+      - 如果都未实现 -> 跳过规格同步，警告用户
+
+   d. **记录解决方案**，针对每个冲突：
+      - 要应用哪个变更的规格
+      - 以什么顺序（如果两者都要）
+      - 理由（在代码库中发现了什么）
+
+6. **显示汇总状态表**
+
+   显示汇总所有变更的表格：
+
    \`\`\`
-   * Conflict resolution:
-     - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
+   | 变更                | 制品    | 任务  | 规格     | 冲突    | 状态   |
+   |---------------------|---------|-------|----------|---------|--------|
+   | schema-management   | 完成    | 5/5   | 2 增量   | 无      | 就绪   |
+   | project-config      | 完成    | 3/3   | 1 增量   | 无      | 就绪   |
+   | add-oauth           | 完成    | 4/4   | 1 增量   | auth (!)| 就绪*  |
+   | add-verify-skill    | 剩余 1  | 2/5   | 无       | 无      | 警告   |
    \`\`\`
 
-   For incomplete changes, show warnings:
+   对于冲突，显示解决方案：
    \`\`\`
-   Warnings:
-   - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
+   * 冲突解决方案：
+     - auth 规格：将先应用 add-oauth 再应用 add-jwt（两者都已实现，按时间顺序）
    \`\`\`
 
-7. **Confirm batch operation**
+   对于未完成的变更，显示警告：
+   \`\`\`
+   警告：
+   - add-verify-skill：1 个未完成的制品，3 个未完成的任务
+   \`\`\`
 
-   Use **AskUserQuestion tool** with a single confirmation:
+7. **确认批量操作**
 
-   - "Archive N changes?" with options based on status
-   - Options might include:
-     - "Archive all N changes"
-     - "Archive only N ready changes (skip incomplete)"
-     - "Cancel"
+   使用 **AskUserQuestion 工具** 进行单次确认：
 
-   If there are incomplete changes, make clear they'll be archived with warnings.
+   - "归档 N 个变更？"根据状态提供选项
+   - 选项可能包括：
+     - "归档所有 N 个变更"
+     - "仅归档 N 个就绪的变更（跳过未完成的）"
+     - "取消"
 
-8. **Execute archive for each confirmed change**
+   如果有未完成的变更，明确说明它们将带警告归档。
 
-   Process changes in the determined order (respecting conflict resolution):
+8. **为每个确认的变更执行归档**
 
-   a. **Sync specs** if delta specs exist:
-      - Use the openspec-sync-specs approach (agent-driven intelligent merge)
-      - For conflicts, apply in resolved order
-      - Track if sync was done
+   按确定的顺序处理变更（遵循冲突解决方案）：
 
-   b. **Perform the archive**:
+   a. **同步规格**（如果存在增量规格）：
+      - 使用 openspec-sync-specs 方式（代理驱动的智能合并）
+      - 对于冲突，按已解决的顺序应用
+      - 跟踪是否已同步
+
+   b. **执行归档**：
       \`\`\`bash
       mkdir -p openspec/changes/archive
       mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
       \`\`\`
 
-   c. **Track outcome** for each change:
-      - Success: archived successfully
-      - Failed: error during archive (record error)
-      - Skipped: user chose not to archive (if applicable)
+   c. **跟踪结果**，针对每个变更：
+      - 成功：归档成功
+      - 失败：归档期间出错（记录错误）
+      - 跳过：用户选择不归档（如适用）
 
-9. **Display summary**
+9. **显示摘要**
 
-   Show final results:
+   显示最终结果：
 
    \`\`\`
-   ## Bulk Archive Complete
+   ## 批量归档完成
 
-   Archived 3 changes:
+   已归档 3 个变更：
    - schema-management-cli -> archive/2026-01-19-schema-management-cli/
    - project-config -> archive/2026-01-19-project-config/
    - add-oauth -> archive/2026-01-19-add-oauth/
 
-   Skipped 1 change:
-   - add-verify-skill (user chose not to archive incomplete)
+   已跳过 1 个变更：
+   - add-verify-skill（用户选择不归档未完成的变更）
 
-   Spec sync summary:
-   - 4 delta specs synced to main specs
-   - 1 conflict resolved (auth: applied both in chronological order)
+   规格同步摘要：
+   - 4 个增量规格已同步到主规格
+   - 1 个冲突已解决（auth：按时间顺序应用了两者）
    \`\`\`
 
-   If any failures:
+   如果有任何失败：
    \`\`\`
-   Failed 1 change:
-   - some-change: Archive directory already exists
+   失败 1 个变更：
+   - some-change：归档目录已存在
    \`\`\`
 
-**Conflict Resolution Examples**
+**冲突解决示例**
 
-Example 1: Only one implemented
+示例 1：仅一个已实现
 \`\`\`
-Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
+冲突：specs/auth/spec.md 被 [add-oauth, add-jwt] 修改
 
-Checking add-oauth:
-- Delta adds "OAuth Provider Integration" requirement
-- Searching codebase... found src/auth/oauth.ts implementing OAuth flow
+检查 add-oauth：
+- 增量添加了 "OAuth Provider Integration" 需求
+- 搜索代码库... 找到 src/auth/oauth.ts 实现了 OAuth 流程
 
-Checking add-jwt:
-- Delta adds "JWT Token Handling" requirement
-- Searching codebase... no JWT implementation found
+检查 add-jwt：
+- 增量添加了 "JWT Token Handling" 需求
+- 搜索代码库... 未找到 JWT 实现
 
-Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
-\`\`\`
-
-Example 2: Both implemented
-\`\`\`
-Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
-
-Checking add-rest-api (created 2026-01-10):
-- Delta adds "REST Endpoints" requirement
-- Searching codebase... found src/api/rest.ts
-
-Checking add-graphql (created 2026-01-15):
-- Delta adds "GraphQL Schema" requirement
-- Searching codebase... found src/api/graphql.ts
-
-Resolution: Both implemented. Will apply add-rest-api specs first,
-then add-graphql specs (chronological order, newer takes precedence).
+解决方案：仅 add-oauth 已实现。将仅同步 add-oauth 的规格。
 \`\`\`
 
-**Output On Success**
+示例 2：两者都已实现
+\`\`\`
+冲突：specs/api/spec.md 被 [add-rest-api, add-graphql] 修改
+
+检查 add-rest-api（创建于 2026-01-10）：
+- 增量添加了 "REST Endpoints" 需求
+- 搜索代码库... 找到 src/api/rest.ts
+
+检查 add-graphql（创建于 2026-01-15）：
+- 增量添加了 "GraphQL Schema" 需求
+- 搜索代码库... 找到 src/api/graphql.ts
+
+解决方案：两者都已实现。将先应用 add-rest-api 的规格，
+再应用 add-graphql 的规格（按时间顺序，新的优先）。
+\`\`\`
+
+**成功时的输出**
 
 \`\`\`
-## Bulk Archive Complete
+## 批量归档完成
 
-Archived N changes:
+已归档 N 个变更：
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 - <change-2> -> archive/YYYY-MM-DD-<change-2>/
 
-Spec sync summary:
-- N delta specs synced to main specs
-- No conflicts (or: M conflicts resolved)
+规格同步摘要：
+- N 个增量规格已同步到主规格
+- 无冲突（或：M 个冲突已解决）
 \`\`\`
 
-**Output On Partial Success**
+**部分成功时的输出**
 
 \`\`\`
-## Bulk Archive Complete (partial)
+## 批量归档完成（部分）
 
-Archived N changes:
+已归档 N 个变更：
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 
-Skipped M changes:
-- <change-2> (user chose not to archive incomplete)
+已跳过 M 个变更：
+- <change-2>（用户选择不归档未完成的变更）
 
-Failed K changes:
-- <change-3>: Archive directory already exists
+失败 K 个变更：
+- <change-3>：归档目录已存在
 \`\`\`
 
-**Output When No Changes**
+**无变更时的输出**
 
 \`\`\`
-## No Changes to Archive
+## 无变更可归档
 
-No active changes found. Create a new change to get started.
+未找到活跃变更。创建新变更以开始。
 \`\`\`
 
-**Guardrails**
-- Allow any number of changes (1+ is fine, 2+ is the typical use case)
-- Always prompt for selection, never auto-select
-- Detect spec conflicts early and resolve by checking codebase
-- When both changes are implemented, apply specs in chronological order
-- Skip spec sync only when implementation is missing (warn user)
-- Show clear per-change status before confirming
-- Use single confirmation for entire batch
-- Track and report all outcomes (success/skip/fail)
-- Preserve .openspec.yaml when moving to archive
-- Archive directory target uses current date: YYYY-MM-DD-<name>
-- If archive target exists, fail that change but continue with others`,
+**注意事项**
+- 允许任意数量的变更（1 个以上即可，2 个以上是典型用例）
+- 始终提示选择，不要自动选择
+- 尽早检测规格冲突，通过检查代码库解决
+- 当两个变更都已实现时，按时间顺序应用规格
+- 仅在实现缺失时跳过规格同步（警告用户）
+- 确认前显示清晰的逐变更状态
+- 对整个批次使用单次确认
+- 跟踪并报告所有结果（成功/跳过/失败）
+- 移动到归档时保留 .openspec.yaml
+- 归档目录目标使用当前日期：YYYY-MM-DD-<name>
+- 如果归档目标已存在，该变更失败但继续处理其他变更`,
     license: 'MIT',
-    compatibility: 'Requires openspec CLI.',
+    compatibility: '需要 rd CLI。',
     metadata: { author: 'openspec', version: '1.0' },
   };
 }
@@ -254,243 +254,243 @@ No active changes found. Create a new change to get started.
 export function getOpsxBulkArchiveCommandTemplate(): CommandTemplate {
   return {
     name: 'OPSX: Bulk Archive',
-    description: 'Archive multiple completed changes at once',
+    description: '批量归档已完成的变更',
     category: 'Workflow',
     tags: ['workflow', 'archive', 'experimental', 'bulk'],
-    content: `Archive multiple completed changes in a single operation.
+    content: `批量归档多个已完成的变更。
 
-This skill allows you to batch-archive changes, handling spec conflicts intelligently by checking the codebase to determine what's actually implemented.
+此技能允许你批量归档变更，通过检查代码库确定实际已实现的内容，智能地处理规格冲突。
 
-**Input**: None required (prompts for selection)
+**输入**：无需输入（提示选择）
 
-**Steps**
+**步骤**
 
-1. **Get active changes**
+1. **获取活跃变更**
 
-   Run \`openspec list --json\` to get all active changes.
+   运行 \`rd list --json\` 获取所有活跃变更。
 
-   If no active changes exist, inform user and stop.
+   如果没有活跃变更，通知用户并停止。
 
-2. **Prompt for change selection**
+2. **提示选择变更**
 
-   Use **AskUserQuestion tool** with multi-select to let user choose changes:
-   - Show each change with its schema
-   - Include an option for "All changes"
-   - Allow any number of selections (1+ works, 2+ is the typical use case)
+   使用 **AskUserQuestion 工具** 的多选功能让用户选择变更：
+   - 显示每个变更及其 schema
+   - 包含"所有变更"选项
+   - 允许任意数量的选择（1 个以上即可，2 个以上是典型用例）
 
-   **IMPORTANT**: Do NOT auto-select. Always let the user choose.
+   **重要提示**：不要自动选择。始终让用户选择。
 
-3. **Batch validation - gather status for all selected changes**
+3. **批量验证 - 收集所有选中变更的状态**
 
-   For each selected change, collect:
+   对于每个选中的变更，收集：
 
-   a. **Artifact status** - Run \`openspec status --change "<name>" --json\`
-      - Parse \`schemaName\` and \`artifacts\` list
-      - Note which artifacts are \`done\` vs other states
+   a. **制品状态** - 运行 \`rd status --change "<name>" --json\`
+      - 解析 \`schemaName\` 和 \`artifacts\` 列表
+      - 记录哪些制品是 \`done\`，哪些是其他状态
 
-   b. **Task completion** - Read \`openspec/changes/<name>/tasks.md\`
-      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete)
-      - If no tasks file exists, note as "No tasks"
+   b. **任务完成情况** - 读取 \`openspec/changes/<name>/tasks.md\`
+      - 统计 \`- [ ]\`（未完成）和 \`- [x]\`（已完成）的数量
+      - 如果不存在任务文件，记录为"无任务"
 
-   c. **Delta specs** - Check \`openspec/changes/<name>/specs/\` directory
-      - List which capability specs exist
-      - For each, extract requirement names (lines matching \`### Requirement: <name>\`)
+   c. **增量规格** - 检查 \`openspec/changes/<name>/specs/\` 目录
+      - 列出存在哪些 capability 规格
+      - 对于每个规格，提取需求名称（匹配 \`### Requirement: <name>\` 的行）
 
-4. **Detect spec conflicts**
+4. **检测规格冲突**
 
-   Build a map of \`capability -> [changes that touch it]\`:
-
-   \`\`\`
-   auth -> [change-a, change-b]  <- CONFLICT (2+ changes)
-   api  -> [change-c]            <- OK (only 1 change)
-   \`\`\`
-
-   A conflict exists when 2+ selected changes have delta specs for the same capability.
-
-5. **Resolve conflicts agentically**
-
-   **For each conflict**, investigate the codebase:
-
-   a. **Read the delta specs** from each conflicting change to understand what each claims to add/modify
-
-   b. **Search the codebase** for implementation evidence:
-      - Look for code implementing requirements from each delta spec
-      - Check for related files, functions, or tests
-
-   c. **Determine resolution**:
-      - If only one change is actually implemented -> sync that one's specs
-      - If both implemented -> apply in chronological order (older first, newer overwrites)
-      - If neither implemented -> skip spec sync, warn user
-
-   d. **Record resolution** for each conflict:
-      - Which change's specs to apply
-      - In what order (if both)
-      - Rationale (what was found in codebase)
-
-6. **Show consolidated status table**
-
-   Display a table summarizing all changes:
+   构建 \`capability -> [涉及该 capability 的变更]\` 的映射：
 
    \`\`\`
-   | Change              | Artifacts | Tasks | Specs   | Conflicts | Status |
-   |---------------------|-----------|-------|---------|-----------|--------|
-   | schema-management   | Done      | 5/5   | 2 delta | None      | Ready  |
-   | project-config      | Done      | 3/3   | 1 delta | None      | Ready  |
-   | add-oauth           | Done      | 4/4   | 1 delta | auth (!)  | Ready* |
-   | add-verify-skill    | 1 left    | 2/5   | None    | None      | Warn   |
+   auth -> [change-a, change-b]  <- 冲突（2 个以上变更）
+   api  -> [change-c]            <- 正常（仅 1 个变更）
    \`\`\`
 
-   For conflicts, show the resolution:
+   当 2 个或更多选中的变更具有相同 capability 的增量规格时，即存在冲突。
+
+5. **智能解决冲突**
+
+   **对于每个冲突**，调查代码库：
+
+   a. **读取增量规格**，从每个冲突变更中了解各自声称要添加/修改的内容
+
+   b. **搜索代码库**，查找实现证据：
+      - 查找实现每个增量规格需求的代码
+      - 检查相关文件、函数或测试
+
+   c. **确定解决方案**：
+      - 如果只有一个变更已实现 -> 同步该变更的规格
+      - 如果两个都已实现 -> 按时间顺序应用（先旧的，新的覆盖）
+      - 如果都未实现 -> 跳过规格同步，警告用户
+
+   d. **记录解决方案**，针对每个冲突：
+      - 要应用哪个变更的规格
+      - 以什么顺序（如果两者都要）
+      - 理由（在代码库中发现了什么）
+
+6. **显示汇总状态表**
+
+   显示汇总所有变更的表格：
+
    \`\`\`
-   * Conflict resolution:
-     - auth spec: Will apply add-oauth then add-jwt (both implemented, chronological order)
+   | 变更                | 制品    | 任务  | 规格     | 冲突    | 状态   |
+   |---------------------|---------|-------|----------|---------|--------|
+   | schema-management   | 完成    | 5/5   | 2 增量   | 无      | 就绪   |
+   | project-config      | 完成    | 3/3   | 1 增量   | 无      | 就绪   |
+   | add-oauth           | 完成    | 4/4   | 1 增量   | auth (!)| 就绪*  |
+   | add-verify-skill    | 剩余 1  | 2/5   | 无       | 无      | 警告   |
    \`\`\`
 
-   For incomplete changes, show warnings:
+   对于冲突，显示解决方案：
    \`\`\`
-   Warnings:
-   - add-verify-skill: 1 incomplete artifact, 3 incomplete tasks
+   * 冲突解决方案：
+     - auth 规格：将先应用 add-oauth 再应用 add-jwt（两者都已实现，按时间顺序）
    \`\`\`
 
-7. **Confirm batch operation**
+   对于未完成的变更，显示警告：
+   \`\`\`
+   警告：
+   - add-verify-skill：1 个未完成的制品，3 个未完成的任务
+   \`\`\`
 
-   Use **AskUserQuestion tool** with a single confirmation:
+7. **确认批量操作**
 
-   - "Archive N changes?" with options based on status
-   - Options might include:
-     - "Archive all N changes"
-     - "Archive only N ready changes (skip incomplete)"
-     - "Cancel"
+   使用 **AskUserQuestion 工具** 进行单次确认：
 
-   If there are incomplete changes, make clear they'll be archived with warnings.
+   - "归档 N 个变更？"根据状态提供选项
+   - 选项可能包括：
+     - "归档所有 N 个变更"
+     - "仅归档 N 个就绪的变更（跳过未完成的）"
+     - "取消"
 
-8. **Execute archive for each confirmed change**
+   如果有未完成的变更，明确说明它们将带警告归档。
 
-   Process changes in the determined order (respecting conflict resolution):
+8. **为每个确认的变更执行归档**
 
-   a. **Sync specs** if delta specs exist:
-      - Use the openspec-sync-specs approach (agent-driven intelligent merge)
-      - For conflicts, apply in resolved order
-      - Track if sync was done
+   按确定的顺序处理变更（遵循冲突解决方案）：
 
-   b. **Perform the archive**:
+   a. **同步规格**（如果存在增量规格）：
+      - 使用 openspec-sync-specs 方式（代理驱动的智能合并）
+      - 对于冲突，按已解决的顺序应用
+      - 跟踪是否已同步
+
+   b. **执行归档**：
       \`\`\`bash
       mkdir -p openspec/changes/archive
       mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
       \`\`\`
 
-   c. **Track outcome** for each change:
-      - Success: archived successfully
-      - Failed: error during archive (record error)
-      - Skipped: user chose not to archive (if applicable)
+   c. **跟踪结果**，针对每个变更：
+      - 成功：归档成功
+      - 失败：归档期间出错（记录错误）
+      - 跳过：用户选择不归档（如适用）
 
-9. **Display summary**
+9. **显示摘要**
 
-   Show final results:
+   显示最终结果：
 
    \`\`\`
-   ## Bulk Archive Complete
+   ## 批量归档完成
 
-   Archived 3 changes:
+   已归档 3 个变更：
    - schema-management-cli -> archive/2026-01-19-schema-management-cli/
    - project-config -> archive/2026-01-19-project-config/
    - add-oauth -> archive/2026-01-19-add-oauth/
 
-   Skipped 1 change:
-   - add-verify-skill (user chose not to archive incomplete)
+   已跳过 1 个变更：
+   - add-verify-skill（用户选择不归档未完成的变更）
 
-   Spec sync summary:
-   - 4 delta specs synced to main specs
-   - 1 conflict resolved (auth: applied both in chronological order)
+   规格同步摘要：
+   - 4 个增量规格已同步到主规格
+   - 1 个冲突已解决（auth：按时间顺序应用了两者）
    \`\`\`
 
-   If any failures:
+   如果有任何失败：
    \`\`\`
-   Failed 1 change:
-   - some-change: Archive directory already exists
+   失败 1 个变更：
+   - some-change：归档目录已存在
    \`\`\`
 
-**Conflict Resolution Examples**
+**冲突解决示例**
 
-Example 1: Only one implemented
+示例 1：仅一个已实现
 \`\`\`
-Conflict: specs/auth/spec.md touched by [add-oauth, add-jwt]
+冲突：specs/auth/spec.md 被 [add-oauth, add-jwt] 修改
 
-Checking add-oauth:
-- Delta adds "OAuth Provider Integration" requirement
-- Searching codebase... found src/auth/oauth.ts implementing OAuth flow
+检查 add-oauth：
+- 增量添加了 "OAuth Provider Integration" 需求
+- 搜索代码库... 找到 src/auth/oauth.ts 实现了 OAuth 流程
 
-Checking add-jwt:
-- Delta adds "JWT Token Handling" requirement
-- Searching codebase... no JWT implementation found
+检查 add-jwt：
+- 增量添加了 "JWT Token Handling" 需求
+- 搜索代码库... 未找到 JWT 实现
 
-Resolution: Only add-oauth is implemented. Will sync add-oauth specs only.
-\`\`\`
-
-Example 2: Both implemented
-\`\`\`
-Conflict: specs/api/spec.md touched by [add-rest-api, add-graphql]
-
-Checking add-rest-api (created 2026-01-10):
-- Delta adds "REST Endpoints" requirement
-- Searching codebase... found src/api/rest.ts
-
-Checking add-graphql (created 2026-01-15):
-- Delta adds "GraphQL Schema" requirement
-- Searching codebase... found src/api/graphql.ts
-
-Resolution: Both implemented. Will apply add-rest-api specs first,
-then add-graphql specs (chronological order, newer takes precedence).
+解决方案：仅 add-oauth 已实现。将仅同步 add-oauth 的规格。
 \`\`\`
 
-**Output On Success**
+示例 2：两者都已实现
+\`\`\`
+冲突：specs/api/spec.md 被 [add-rest-api, add-graphql] 修改
+
+检查 add-rest-api（创建于 2026-01-10）：
+- 增量添加了 "REST Endpoints" 需求
+- 搜索代码库... 找到 src/api/rest.ts
+
+检查 add-graphql（创建于 2026-01-15）：
+- 增量添加了 "GraphQL Schema" 需求
+- 搜索代码库... 找到 src/api/graphql.ts
+
+解决方案：两者都已实现。将先应用 add-rest-api 的规格，
+再应用 add-graphql 的规格（按时间顺序，新的优先）。
+\`\`\`
+
+**成功时的输出**
 
 \`\`\`
-## Bulk Archive Complete
+## 批量归档完成
 
-Archived N changes:
+已归档 N 个变更：
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 - <change-2> -> archive/YYYY-MM-DD-<change-2>/
 
-Spec sync summary:
-- N delta specs synced to main specs
-- No conflicts (or: M conflicts resolved)
+规格同步摘要：
+- N 个增量规格已同步到主规格
+- 无冲突（或：M 个冲突已解决）
 \`\`\`
 
-**Output On Partial Success**
+**部分成功时的输出**
 
 \`\`\`
-## Bulk Archive Complete (partial)
+## 批量归档完成（部分）
 
-Archived N changes:
+已归档 N 个变更：
 - <change-1> -> archive/YYYY-MM-DD-<change-1>/
 
-Skipped M changes:
-- <change-2> (user chose not to archive incomplete)
+已跳过 M 个变更：
+- <change-2>（用户选择不归档未完成的变更）
 
-Failed K changes:
-- <change-3>: Archive directory already exists
+失败 K 个变更：
+- <change-3>：归档目录已存在
 \`\`\`
 
-**Output When No Changes**
+**无变更时的输出**
 
 \`\`\`
-## No Changes to Archive
+## 无变更可归档
 
-No active changes found. Create a new change to get started.
+未找到活跃变更。创建新变更以开始。
 \`\`\`
 
-**Guardrails**
-- Allow any number of changes (1+ is fine, 2+ is the typical use case)
-- Always prompt for selection, never auto-select
-- Detect spec conflicts early and resolve by checking codebase
-- When both changes are implemented, apply specs in chronological order
-- Skip spec sync only when implementation is missing (warn user)
-- Show clear per-change status before confirming
-- Use single confirmation for entire batch
-- Track and report all outcomes (success/skip/fail)
-- Preserve .openspec.yaml when moving to archive
-- Archive directory target uses current date: YYYY-MM-DD-<name>
-- If archive target exists, fail that change but continue with others`
+**注意事项**
+- 允许任意数量的变更（1 个以上即可，2 个以上是典型用例）
+- 始终提示选择，不要自动选择
+- 尽早检测规格冲突，通过检查代码库解决
+- 当两个变更都已实现时，按时间顺序应用规格
+- 仅在实现缺失时跳过规格同步（警告用户）
+- 确认前显示清晰的逐变更状态
+- 对整个批次使用单次确认
+- 跟踪并报告所有结果（成功/跳过/失败）
+- 移动到归档时保留 .openspec.yaml
+- 归档目录目标使用当前日期：YYYY-MM-DD-<name>
+- 如果归档目标已存在，该变更失败但继续处理其他变更`
   };
 }

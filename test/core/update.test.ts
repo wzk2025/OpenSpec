@@ -78,7 +78,7 @@ describe('UpdateCommand', () => {
       });
 
       await expect(updateCommand.execute(testDir)).rejects.toThrow(
-        "No OpenSpec directory found. Run 'openspec init' first."
+        "No OpenSpec directory found. Run 'rd init' first."
       );
     });
 
