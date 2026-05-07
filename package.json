@@ -1,6 +1,6 @@
 {
   "name": "@fission-ai/openspec",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "description": "AI-native system for spec-driven development",
   "keywords": [
     "openspec",
@@ -18,7 +18,8 @@
   "author": "OpenSpec Contributors",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "restricted",
+    "registry": "http://192.168.5.160/api/v4/groups/72/packages/npm/"
   },
   "exports": {
     ".": {
@@ -27,7 +28,7 @@
     }
   },
   "bin": {
-    "openspec": "./bin/openspec.js"
+    "rd": "./bin/openspec.js"
   },
   "files": [
     "dist",
