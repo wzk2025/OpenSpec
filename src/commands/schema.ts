@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import ora from 'ora';
+import { OPENSPEC_DIR_NAME } from '../core/config.js';
 import { stringify as stringifyYaml } from 'yaml';
 import {
   getSchemaDir,
@@ -290,7 +291,7 @@ const DEFAULT_ARTIFACTS: Array<{
 export function registerSchemaCommand(program: Command): void {
   const schemaCmd = program
     .command('schema')
-    .description('Manage workflow schemas [experimental]');
+    .description('管理工作流 schema [实验性]');
 
   // Experimental warning
   schemaCmd.hook('preAction', () => {
@@ -300,9 +301,9 @@ export function registerSchemaCommand(program: Command): void {
   // schema which
   schemaCmd
     .command('which [name]')
-    .description('Show where a schema resolves from')
-    .option('--json', 'Output as JSON')
-    .option('--all', 'List all schemas with their resolution sources')
+    .description('显示 schema 的解析来源')
+    .option('--json', '以 JSON 格式输出')
+    .option('--all', '列出所有 schema 及其解析来源')
     .action(async (name?: string, options?: { json?: boolean; all?: boolean }) => {
       try {
         const projectRoot = process.cwd();
@@ -402,9 +403,9 @@ export function registerSchemaCommand(program: Command): void {
   // schema validate
   schemaCmd
     .command('validate [name]')
-    .description('Validate a schema structure and templates')
-    .option('--json', 'Output as JSON')
-    .option('--verbose', 'Show detailed validation steps')
+    .description('验证 schema 结构和模板')
+    .option('--json', '以 JSON 格式输出')
+    .option('--verbose', '显示详细验证步骤')
     .action(async (name?: string, options?: { json?: boolean; verbose?: boolean }) => {
       try {
         const projectRoot = process.cwd();
@@ -547,9 +548,9 @@ export function registerSchemaCommand(program: Command): void {
   // schema fork
   schemaCmd
     .command('fork <source> [name]')
-    .description('Copy an existing schema to project for customization')
-    .option('--json', 'Output as JSON')
-    .option('--force', 'Overwrite existing destination')
+    .description('复制现有 schema 到项目以进行定制')
+    .option('--json', '以 JSON 格式输出')
+    .option('--force', '覆盖已存在的目标')
     .action(async (source: string, name?: string, options?: { json?: boolean; force?: boolean }) => {
       const spinner = options?.json ? null : ora();
 
@@ -664,13 +665,13 @@ export function registerSchemaCommand(program: Command): void {
   // schema init
   schemaCmd
     .command('init <name>')
-    .description('Create a new project-local schema')
-    .option('--json', 'Output as JSON')
-    .option('--description <text>', 'Schema description')
-    .option('--artifacts <list>', 'Comma-separated artifact IDs (proposal,specs,design,tasks)')
-    .option('--default', 'Set as project default schema')
-    .option('--no-default', 'Do not prompt to set as default')
-    .option('--force', 'Overwrite existing schema')
+    .description('创建新的项目本地 schema')
+    .option('--json', '以 JSON 格式输出')
+    .option('--description <text>', 'Schema 描述')
+    .option('--artifacts <list>', '逗号分隔的制品 ID（proposal,specs,design,tasks）')
+    .option('--default', '设为项目默认 schema')
+    .option('--no-default', '不提示设为默认')
+    .option('--force', '覆盖已存在的 schema')
     .action(async (
       name: string,
       options?: {
@@ -868,7 +869,7 @@ export function registerSchemaCommand(program: Command): void {
 
         // Update config if --default
         if (options?.default) {
-          const configPath = path.join(projectRoot, 'openspec', 'config.yaml');
+          const configPath = path.join(projectRoot, OPENSPEC_DIR_NAME, 'config.yaml');
 
           if (fs.existsSync(configPath)) {
             const { parse: parseYaml, stringify: stringifyYaml2 } = await import('yaml');

@@ -6,6 +6,7 @@ import { detectCompleted } from './state.js';
 import { resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { readProjectConfig, validateConfigRules } from '../project-config.js';
+import { OPENSPEC_DIR_NAME } from '../config.js';
 import type { Artifact, CompletedSet } from './types.js';
 
 // Session-level cache for validation warnings (avoid repeating same warnings)
@@ -179,7 +180,7 @@ export function loadChangeContext(
   schemaName?: string
 ): ChangeContext {
   const changeDir = FileSystemUtils.canonicalizeExistingPath(
-    path.join(projectRoot, 'openspec', 'changes', changeName)
+    path.join(projectRoot, OPENSPEC_DIR_NAME, 'changes', changeName)
   );
 
   // Resolve schema: explicit > metadata > default

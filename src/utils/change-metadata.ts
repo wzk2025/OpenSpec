@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { ChangeMetadataSchema, type ChangeMetadata } from '../core/artifact-graph/types.js';
 import { listSchemas } from '../core/artifact-graph/resolver.js';
+import { OPENSPEC_DIR_NAME } from '../core/config.js';
 import { readProjectConfig } from '../core/project-config.js';
 
 const METADATA_FILENAME = '.openspec.yaml';
@@ -163,8 +164,11 @@ export function resolveSchemaForChange(
   changeDir: string,
   explicitSchema?: string
 ): string {
-  // Derive project root from changeDir (changeDir is typically projectRoot/openspec/changes/change-name)
-  const projectRoot = path.resolve(changeDir, '../../..');
+  // Derive project root from changeDir by removing the known subpath structure
+  // changeDir = projectRoot/<OPENSPEC_DIR_NAME>/changes/<changeName>
+  // OPENSPEC_DIR_NAME can be multi-level (e.g., '.harness/spec')
+  const dirParts = OPENSPEC_DIR_NAME.split(path.sep).length; // number of directory levels
+  const projectRoot = path.resolve(changeDir, ...Array(dirParts + 2).fill('..'));
 
   // 1. Explicit override wins
   if (explicitSchema) {

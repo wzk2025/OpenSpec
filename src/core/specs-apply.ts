@@ -8,6 +8,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import chalk from 'chalk';
+import { OPENSPEC_DIR_NAME } from './config.js';
 import {
   extractRequirementsSection,
   parseDeltaSpec,
@@ -393,8 +394,8 @@ export async function applySpecs(
     silent?: boolean;
   } = {}
 ): Promise<SpecsApplyOutput> {
-  const changeDir = path.join(projectRoot, 'openspec', 'changes', changeName);
-  const mainSpecsDir = path.join(projectRoot, 'openspec', 'specs');
+  const changeDir = path.join(projectRoot, OPENSPEC_DIR_NAME, 'changes', changeName);
+  const mainSpecsDir = path.join(projectRoot, OPENSPEC_DIR_NAME, 'specs');
 
   // Verify change exists
   try {

@@ -209,8 +209,8 @@ function maybeWarnConfigDrift(
 export function registerConfigCommand(program: Command): void {
   const configCmd = program
     .command('config')
-    .description('View and modify global OpenSpec configuration')
-    .option('--scope <scope>', 'Config scope (only "global" supported currently)')
+    .description('查看和修改全局 OpenSpec 配置')
+    .option('--scope <scope>', '配置范围（当前仅支持 "global"）')
     .hook('preAction', (thisCommand) => {
       const opts = thisCommand.opts();
       if (opts.scope && opts.scope !== 'global') {
@@ -222,7 +222,7 @@ export function registerConfigCommand(program: Command): void {
   // config path
   configCmd
     .command('path')
-    .description('Show config file location')
+    .description('显示配置文件位置')
     .action(() => {
       console.log(getGlobalConfigPath());
     });
@@ -230,8 +230,8 @@ export function registerConfigCommand(program: Command): void {
   // config list
   configCmd
     .command('list')
-    .description('Show all current settings')
-    .option('--json', 'Output as JSON')
+    .description('显示所有当前设置')
+    .option('--json', '以 JSON 格式输出')
     .action((options: { json?: boolean }) => {
       const config = getGlobalConfig();
 
@@ -270,7 +270,7 @@ export function registerConfigCommand(program: Command): void {
   // config get
   configCmd
     .command('get <key>')
-    .description('Get a specific value (raw, scriptable)')
+    .description('获取指定配置值（原始值，可用于脚本）')
     .action((key: string) => {
       const config = getGlobalConfig();
       const value = getNestedValue(config as Record<string, unknown>, key);
@@ -290,9 +290,9 @@ export function registerConfigCommand(program: Command): void {
   // config set
   configCmd
     .command('set <key> <value>')
-    .description('Set a value (auto-coerce types)')
-    .option('--string', 'Force value to be stored as string')
-    .option('--allow-unknown', 'Allow setting unknown keys')
+    .description('设置配置值（自动类型转换）')
+    .option('--string', '强制以字符串存储值')
+    .option('--allow-unknown', '允许设置未知键')
     .action((key: string, value: string, options: { string?: boolean; allowUnknown?: boolean }) => {
       const allowUnknown = Boolean(options.allowUnknown);
       const keyValidation = validateConfigKeyPath(key);
@@ -332,7 +332,7 @@ export function registerConfigCommand(program: Command): void {
   // config unset
   configCmd
     .command('unset <key>')
-    .description('Remove a key (revert to default)')
+    .description('移除配置键（恢复默认值）')
     .action((key: string) => {
       const config = getGlobalConfig() as Record<string, unknown>;
       const existed = deleteNestedValue(config, key);
@@ -348,9 +348,9 @@ export function registerConfigCommand(program: Command): void {
   // config reset
   configCmd
     .command('reset')
-    .description('Reset configuration to defaults')
-    .option('--all', 'Reset all configuration (required)')
-    .option('-y, --yes', 'Skip confirmation prompts')
+    .description('重置配置为默认值')
+    .option('--all', '重置所有配置（必填）')
+    .option('-y, --yes', '跳过确认提示')
     .action(async (options: { all?: boolean; yes?: boolean }) => {
       if (!options.all) {
         console.error('Error: --all flag is required for reset');
@@ -389,7 +389,7 @@ export function registerConfigCommand(program: Command): void {
   // config edit
   configCmd
     .command('edit')
-    .description('Open config in $EDITOR')
+    .description('在 $EDITOR 中打开配置文件')
     .action(async () => {
       const editor = process.env.EDITOR || process.env.VISUAL;
 
@@ -452,7 +452,7 @@ export function registerConfigCommand(program: Command): void {
   // config profile [preset]
   configCmd
     .command('profile [preset]')
-    .description('Configure workflow profile (interactive picker or preset shortcut)')
+    .description('配置工作流档案（交互式选择器或预设快捷方式）')
     .action(async (preset?: string) => {
       // Preset shortcut: `openspec config profile core`
       if (preset === 'core') {

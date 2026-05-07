@@ -6,8 +6,9 @@ import { Validator } from '../core/validation/validator.js';
 import type { Spec } from '../core/schemas/index.js';
 import { isInteractive } from '../utils/interactive.js';
 import { getSpecIds } from '../utils/item-discovery.js';
+import { OPENSPEC_DIR_NAME } from '../core/config.js';
 
-const SPECS_DIR = 'openspec/specs';
+const SPECS_DIR = join(OPENSPEC_DIR_NAME, 'specs');
 
 interface ShowOptions {
   json?: boolean;
@@ -65,7 +66,7 @@ function printSpecTextRaw(specPath: string): void {
 }
 
 export class SpecCommand {
-  private SPECS_DIR = 'openspec/specs';
+  private SPECS_DIR = join(OPENSPEC_DIR_NAME, 'specs');
 
   async show(specId?: string, options: ShowOptions = {}): Promise<void> {
     if (!specId) {
@@ -111,7 +112,7 @@ export class SpecCommand {
 export function registerSpecCommand(rootProgram: typeof program) {
   const specCommand = rootProgram
     .command('spec')
-    .description('Manage and view OpenSpec specifications');
+    .description('管理和查看 OpenSpec 规格');
 
   // Deprecation notice for noun-based commands
   specCommand.hook('preAction', () => {
@@ -120,12 +121,12 @@ export function registerSpecCommand(rootProgram: typeof program) {
 
   specCommand
     .command('show [spec-id]')
-    .description('Display a specific specification')
-    .option('--json', 'Output as JSON')
-    .option('--requirements', 'JSON only: Show only requirements (exclude scenarios)')
-    .option('--no-scenarios', 'JSON only: Exclude scenario content')
-    .option('-r, --requirement <id>', 'JSON only: Show specific requirement by ID (1-based)')
-    .option('--no-interactive', 'Disable interactive prompts')
+    .description('显示指定规格')
+    .option('--json', '以 JSON 格式输出')
+    .option('--requirements', '仅 JSON: 仅显示需求（排除场景）')
+    .option('--no-scenarios', '仅 JSON: 排除场景内容')
+    .option('-r, --requirement <id>', '仅 JSON: 按 ID 显示指定需求（从 1 开始）')
+    .option('--no-interactive', '禁用交互式提示')
     .action(async (specId: string | undefined, options: ShowOptions & { noInteractive?: boolean }) => {
       try {
         const cmd = new SpecCommand();
@@ -138,9 +139,9 @@ export function registerSpecCommand(rootProgram: typeof program) {
 
   specCommand
     .command('list')
-    .description('List all available specifications')
-    .option('--json', 'Output as JSON')
-    .option('--long', 'Show id and title with counts')
+    .description('列出所有可用规格')
+    .option('--json', '以 JSON 格式输出')
+    .option('--long', '显示 ID 和标题及计数')
     .action((options: { json?: boolean; long?: boolean }) => {
       try {
         if (!existsSync(SPECS_DIR)) {
@@ -197,10 +198,10 @@ export function registerSpecCommand(rootProgram: typeof program) {
 
   specCommand
     .command('validate [spec-id]')
-    .description('Validate a specification structure')
-    .option('--strict', 'Enable strict validation mode')
-    .option('--json', 'Output validation report as JSON')
-    .option('--no-interactive', 'Disable interactive prompts')
+    .description('验证规格结构')
+    .option('--strict', '启用严格验证模式')
+    .option('--json', '以 JSON 格式输出验证报告')
+    .option('--no-interactive', '禁用交互式提示')
     .action(async (specId: string | undefined, options: { strict?: boolean; json?: boolean; noInteractive?: boolean }) => {
       try {
         if (!specId) {

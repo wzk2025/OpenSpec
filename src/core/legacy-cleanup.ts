@@ -7,7 +7,7 @@ import path from 'path';
 import { promises as fs } from 'fs';
 import chalk from 'chalk';
 import { FileSystemUtils, removeMarkerBlock as removeMarkerBlockUtil } from '../utils/file-system.js';
-import { OPENSPEC_MARKERS } from './config.js';
+import { OPENSPEC_MARKERS, OPENSPEC_DIR_NAME } from './config.js';
 
 /**
  * Legacy config file names from the old ToolRegistry.
@@ -276,11 +276,11 @@ export async function detectLegacyStructureFiles(
   let hasRootAgentsWithMarkers = false;
 
   // Check for openspec/AGENTS.md
-  const openspecAgentsPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'AGENTS.md');
+  const openspecAgentsPath = FileSystemUtils.joinPath(projectPath, OPENSPEC_DIR_NAME, 'AGENTS.md');
   hasOpenspecAgents = await FileSystemUtils.fileExists(openspecAgentsPath);
 
   // Check for openspec/project.md (for migration messaging, not deleted)
-  const projectMdPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'project.md');
+  const projectMdPath = FileSystemUtils.joinPath(projectPath, OPENSPEC_DIR_NAME, 'project.md');
   hasProjectMd = await FileSystemUtils.fileExists(projectMdPath);
 
   // Check for root AGENTS.md with OpenSpec markers
@@ -412,7 +412,7 @@ export async function cleanupLegacyArtifacts(
 
   // Delete openspec/AGENTS.md (this is inside openspec/, it's OpenSpec-managed)
   if (detection.hasOpenspecAgents) {
-    const agentsPath = FileSystemUtils.joinPath(projectPath, 'openspec', 'AGENTS.md');
+    const agentsPath = FileSystemUtils.joinPath(projectPath, OPENSPEC_DIR_NAME, 'AGENTS.md');
     if (await FileSystemUtils.fileExists(agentsPath)) {
       try {
         await fs.unlink(agentsPath);

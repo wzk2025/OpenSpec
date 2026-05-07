@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { getGlobalDataDir } from '../global-config.js';
 import { parseSchema, SchemaValidationError } from './schema.js';
 import type { SchemaYaml } from './types.js';
+import { OPENSPEC_DIR_NAME } from '../config.js';
 
 /**
  * Error thrown when loading a schema fails.
@@ -42,7 +43,7 @@ export function getUserSchemasDir(): string {
  * @returns The path to the project's schemas directory
  */
 export function getProjectSchemasDir(projectRoot: string): string {
-  return path.join(projectRoot, 'openspec', 'schemas');
+  return path.join(projectRoot, OPENSPEC_DIR_NAME, 'schemas');
 }
 
 /**

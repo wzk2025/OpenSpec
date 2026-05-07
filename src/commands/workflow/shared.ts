@@ -10,6 +10,7 @@ import path from 'path';
 import * as fs from 'fs';
 import { getSchemaDir, listSchemas } from '../../core/artifact-graph/index.js';
 import { validateChangeName } from '../../utils/change-utils.js';
+import { OPENSPEC_DIR_NAME } from '../../core/config.js';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -91,7 +92,7 @@ export function getStatusIndicator(status: 'done' | 'ready' | 'blocked'): string
  * Excludes the archive directory and hidden directories.
  */
 export async function getAvailableChanges(projectRoot: string): Promise<string[]> {
-  const changesPath = path.join(projectRoot, 'openspec', 'changes');
+  const changesPath = path.join(projectRoot, OPENSPEC_DIR_NAME, 'changes');
   try {
     const entries = await fs.promises.readdir(changesPath, { withFileTypes: true });
     return entries
@@ -128,7 +129,7 @@ export async function validateChangeExists(
   }
 
   // Check directory existence directly
-  const changePath = path.join(projectRoot, 'openspec', 'changes', changeName);
+  const changePath = path.join(projectRoot, OPENSPEC_DIR_NAME, 'changes', changeName);
   const exists = fs.existsSync(changePath) && fs.statSync(changePath).isDirectory();
 
   if (!exists) {
