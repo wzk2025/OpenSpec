@@ -27,7 +27,7 @@ export class ZshGenerator implements CompletionGenerator {
     const commandCaseLines: string[] = [];
     for (const cmd of commands) {
       commandCaseLines.push(`        ${cmd.name})`);
-      commandCaseLines.push(`          _openspec_${this.sanitizeFunctionName(cmd.name)}`);
+      commandCaseLines.push(`          _rd_${this.sanitizeFunctionName(cmd.name)}`);
       commandCaseLines.push('          ;;');
     }
     const commandCases = commandCaseLines.join('\n');
@@ -44,12 +44,12 @@ export class ZshGenerator implements CompletionGenerator {
     const helpers = ZSH_DYNAMIC_HELPERS;
 
     // Assemble final script with template literal
-    return `#compdef openspec
+    return `#compdef rd
 
-# Zsh completion script for OpenSpec CLI
+# Zsh completion script for RdSpec CLI
 # Auto-generated - do not edit manually
 
-_openspec() {
+_rd() {
   local context state line
   typeset -A opt_args
 
@@ -76,7 +76,7 @@ ${commandCases}
 
 ${commandFunctions}
 ${helpers}
-compdef _openspec openspec
+compdef _rd rd
 `;
   }
 
@@ -84,7 +84,7 @@ compdef _openspec openspec
    * Generate completion function for a specific command
    */
   private generateCommandFunction(cmd: CommandDefinition): string[] {
-    const funcName = `_openspec_${this.sanitizeFunctionName(cmd.name)}`;
+    const funcName = `_rd_${this.sanitizeFunctionName(cmd.name)}`;
     const lines: string[] = [];
 
     lines.push(`${funcName}() {`);
@@ -123,7 +123,7 @@ compdef _openspec openspec
 
       for (const subcmd of cmd.subcommands) {
         lines.push(`        ${subcmd.name})`);
-        lines.push(`          _openspec_${this.sanitizeFunctionName(cmd.name)}_${this.sanitizeFunctionName(subcmd.name)}`);
+        lines.push(`          _rd_${this.sanitizeFunctionName(cmd.name)}_${this.sanitizeFunctionName(subcmd.name)}`);
         lines.push('          ;;');
       }
 
@@ -168,7 +168,7 @@ compdef _openspec openspec
    * Generate completion function for a subcommand
    */
   private generateSubcommandFunction(parentName: string, subcmd: CommandDefinition): string[] {
-    const funcName = `_openspec_${this.sanitizeFunctionName(parentName)}_${this.sanitizeFunctionName(subcmd.name)}`;
+    const funcName = `_rd_${this.sanitizeFunctionName(parentName)}_${this.sanitizeFunctionName(subcmd.name)}`;
     const lines: string[] = [];
 
     lines.push(`${funcName}() {`);
@@ -236,11 +236,11 @@ compdef _openspec openspec
   private generatePositionalSpec(positionalType?: string): string {
     switch (positionalType) {
       case 'change-id':
-        return "'*: :_openspec_complete_changes'";
+        return "'*: :_rd_complete_changes'";
       case 'spec-id':
-        return "'*: :_openspec_complete_specs'";
+        return "'*: :_rd_complete_specs'";
       case 'change-or-spec-id':
-        return "'*: :_openspec_complete_items'";
+        return "'*: :_rd_complete_items'";
       case 'path':
         return "'*:path:_files'";
       case 'shell':

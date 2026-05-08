@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getArchiveChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-archive-change',
+    name: 'rd-archive-change',
     description: '归档已完成的变更。用于在实施完成后归档和同步规格。',
     instructions: `归档已完成的变更。所有提示消息使用中文。
 
@@ -64,7 +64,7 @@ export function getArchiveChangeSkillTemplate(): SkillTemplate {
    - 如果需要变更："立即同步（推荐）"、"不同步直接归档"
    - 如果已同步："立即归档"、"仍然同步"、"取消"
 
-   如果用户选择同步，使用 Task 工具（subagent_type: "general-purpose", prompt: "使用 Skill 工具调用 openspec-sync-specs 来处理变更 '<name>'。增量规格分析：<包含分析的增量规格摘要>"）。无论选择如何，都继续归档。
+   如果用户选择同步，使用 Task 工具（subagent_type: "general-purpose", prompt: "使用 Skill 工具调用 rd-sync-specs 来处理变更 '<name>'。增量规格分析：<包含分析的增量规格摘要>"）。无论选择如何，都继续归档。
 
 5. **执行归档**
 
@@ -111,7 +111,7 @@ export function getArchiveChangeSkillTemplate(): SkillTemplate {
 - 不要因警告阻止归档 - 仅通知并确认
 - 移动到归档时保留 .openspec.yaml（随目录一起移动）
 - 显示清晰的操作摘要
-- 如果请求同步，使用 openspec-sync-specs 方式（代理驱动）
+- 如果请求同步，使用 rd-sync-specs 方式（代理驱动）
 - 如果存在增量规格，始终运行同步评估并在提示前显示合并摘要`,
     license: 'MIT',
     compatibility: '需要 rd CLI。',
@@ -179,7 +179,7 @@ export function getOpsxArchiveCommandTemplate(): CommandTemplate {
    - 如果需要变更："立即同步（推荐）"、"不同步直接归档"
    - 如果已同步："立即归档"、"仍然同步"、"取消"
 
-   如果用户选择同步，使用 Task 工具（subagent_type: "general-purpose", prompt: "使用 Skill 工具调用 openspec-sync-specs 来处理变更 '<name>'。增量规格分析：<包含分析的增量规格摘要>"）。无论选择如何，都继续归档。
+   如果用户选择同步，使用 Task 工具（subagent_type: "general-purpose", prompt: "使用 Skill 工具调用 rd-sync-specs 来处理变更 '<name>'。增量规格分析：<包含分析的增量规格摘要>"）。无论选择如何，都继续归档。
 
 5. **执行归档**
 
@@ -273,7 +273,7 @@ export function getOpsxArchiveCommandTemplate(): CommandTemplate {
 - 不要因警告阻止归档 - 仅通知并确认
 - 移动到归档时保留 .openspec.yaml（随目录一起移动）
 - 显示清晰的操作摘要
-- 如果请求同步，使用 Skill 工具调用 \`openspec-sync-specs\`（代理驱动）
+- 如果请求同步，使用 Skill 工具调用 \`rd-sync-specs\`（代理驱动）
 - 如果存在增量规格，始终运行同步评估并在提示前显示合并摘要`
   };
 }

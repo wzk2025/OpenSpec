@@ -85,7 +85,7 @@ export class UpdateCommand {
 
     // 1. Check openspec directory exists
     if (!await FileSystemUtils.directoryExists(openspecPath)) {
-      throw new Error(`No OpenSpec directory found. Run 'rd init' first.`);
+      throw new Error(`No RdSpec directory found. Run 'rd init' first.`);
     }
 
     // 2. Perform one-time migration if needed before any legacy upgrade generation.

@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getContinueChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-continue-change',
+    name: 'rd-continue-change',
     description: '继续处理已有的变更，创建下一个制品。当用户想要推进变更、创建下一个制品或继续工作流时使用。',
     instructions: `继续处理变更，创建下一个制品。
 

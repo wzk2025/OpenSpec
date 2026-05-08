@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-ff-change',
+    name: 'rd-ff-change',
     description: '快速推进制品创建。当用户想要快速创建实施所需的所有制品而无需逐步操作时使用。',
     instructions: `快速推进制品创建 - 一次性生成开始实施所需的所有内容。
 

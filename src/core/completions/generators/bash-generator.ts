@@ -31,10 +31,10 @@ export class BashGenerator implements CompletionGenerator {
     const helpers = BASH_DYNAMIC_HELPERS;
 
     // Assemble final script with template literal
-    return `# Bash completion script for OpenSpec CLI
+    return `# Bash completion script for RdSpec CLI
 # Auto-generated - do not edit manually
 
-_openspec_completion() {
+_rd_completion() {
   local cur prev words cword
 
   # Use _init_completion if available (from bash-completion package)
@@ -71,7 +71,7 @@ ${commandCases}
 }
 
 ${helpers}
-complete -F _openspec_completion openspec
+complete -F _rd_completion rd
 `;
   }
 

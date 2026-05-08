@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getOnboardSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-onboard',
+    name: 'rd-onboard',
     description: 'OpenSpec 引导式上手教程 - 带领用户完成一个完整的工作流周期，边做边学。',
     instructions: getOnboardInstructions(),
     license: 'MIT',

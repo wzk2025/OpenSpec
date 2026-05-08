@@ -35,7 +35,7 @@ const COMMON_FLAGS = {
 export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     name: 'init',
-    description: 'Initialize OpenSpec in your project',
+    description: 'Initialize RdSpec in your project',
     acceptsPositional: true,
     positionalType: 'path',
     flags: [
@@ -48,7 +48,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'update',
-    description: 'Update OpenSpec instruction files',
+    description: 'Update RdSpec instruction files',
     acceptsPositional: true,
     positionalType: 'path',
     flags: [],
@@ -157,7 +157,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'feedback',
-    description: 'Submit feedback about OpenSpec',
+    description: 'Submit feedback about RdSpec',
     acceptsPositional: true,
     flags: [
       {
@@ -169,7 +169,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'change',
-    description: 'Manage OpenSpec change proposals (deprecated)',
+    description: 'Manage RdSpec change proposals (deprecated)',
     flags: [],
     subcommands: [
       {
@@ -216,7 +216,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'spec',
-    description: 'Manage OpenSpec specifications',
+    description: 'Manage RdSpec specifications',
     flags: [],
     subcommands: [
       {
@@ -269,7 +269,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'completion',
-    description: 'Manage shell completions for OpenSpec CLI',
+    description: 'Manage shell completions for RdSpec CLI',
     flags: [],
     subcommands: [
       {
@@ -308,7 +308,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'config',
-    description: 'View and modify global OpenSpec configuration',
+    description: 'View and modify global RdSpec configuration',
     flags: [
       {
         name: 'scope',

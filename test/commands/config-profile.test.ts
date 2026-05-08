@@ -85,18 +85,18 @@ describe('config profile interactive flow', () => {
 
   function setupDriftedProjectArtifacts(projectDir: string): void {
     fs.mkdirSync(path.join(projectDir, OPENSPEC_DIR_NAME), { recursive: true });
-    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
+    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'rd-explore', 'SKILL.md');
     fs.mkdirSync(path.dirname(exploreSkillPath), { recursive: true });
-    fs.writeFileSync(exploreSkillPath, 'name: openspec-explore\n', 'utf-8');
+    fs.writeFileSync(exploreSkillPath, 'name: rd-explore\n', 'utf-8');
   }
 
   function setupSyncedCoreBothArtifacts(projectDir: string): void {
     fs.mkdirSync(path.join(projectDir, OPENSPEC_DIR_NAME), { recursive: true });
     const coreSkillDirs = [
-      'openspec-propose',
-      'openspec-explore',
-      'openspec-apply-change',
-      'openspec-archive-change',
+      'rd-propose',
+      'rd-explore',
+      'rd-apply-change',
+      'rd-archive-change',
     ];
     for (const dirName of coreSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -113,9 +113,9 @@ describe('config profile interactive flow', () => {
   }
 
   function addExtraSyncWorkflowArtifacts(projectDir: string): void {
-    const syncSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-sync-specs', 'SKILL.md');
+    const syncSkillPath = path.join(projectDir, '.claude', 'skills', 'rd-sync-specs', 'SKILL.md');
     fs.mkdirSync(path.dirname(syncSkillPath), { recursive: true });
-    fs.writeFileSync(syncSkillPath, 'name: openspec-sync-specs\n', 'utf-8');
+    fs.writeFileSync(syncSkillPath, 'name: rd-sync-specs\n', 'utf-8');
 
     const syncCommandPath = path.join(projectDir, '.claude', 'commands', 'rd', 'sync.md');
     fs.mkdirSync(path.dirname(syncCommandPath), { recursive: true });

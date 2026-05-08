@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getNewChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-new-change',
+    name: 'rd-new-change',
     description: '从零创建新变更，使用实验性制品工作流。当用户想要通过结构化的逐步方式创建新功能、修复或修改时使用。',
     instructions: `使用实验性制品驱动方法创建新变更。
 

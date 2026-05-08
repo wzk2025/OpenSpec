@@ -92,7 +92,7 @@ const toolsOptionDescription = `非交互式配置 AI 工具。使用 "all"、"n
 
 program
   .command('init [path]')
-  .description('在项目中初始化 OpenSpec')
+  .description('在项目中初始化 RdSpec')
   .option('--tools <tools>', toolsOptionDescription)
   .option('--force', '自动清理遗留文件，无需确认')
   .option('--profile <profile>', '覆盖全局配置档案（core 或 custom）')
@@ -155,7 +155,7 @@ program
 
 program
   .command('update [path]')
-  .description('更新 OpenSpec 指令文件')
+  .description('更新 RdSpec 指令文件')
   .option('--force', '强制更新，即使工具已是最新')
   .action(async (targetPath = '.', options?: { force?: boolean }) => {
     try {
@@ -339,7 +339,7 @@ program
 // Feedback command
 program
   .command('feedback <message>')
-  .description('提交关于 OpenSpec 的反馈')
+  .description('提交关于 RdSpec 的反馈')
   .option('--body <text>', '反馈的详细描述')
   .action(async (message: string, options?: { body?: string }) => {
     try {

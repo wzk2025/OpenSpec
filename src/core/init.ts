@@ -61,17 +61,17 @@ const PROGRESS_SPINNER = {
 };
 
 const WORKFLOW_TO_SKILL_DIR: Record<string, string> = {
-  'explore': 'openspec-explore',
-  'new': 'openspec-new-change',
-  'continue': 'openspec-continue-change',
-  'apply': 'openspec-apply-change',
-  'ff': 'openspec-ff-change',
-  'sync': 'openspec-sync-specs',
-  'archive': 'openspec-archive-change',
-  'bulk-archive': 'openspec-bulk-archive-change',
-  'verify': 'openspec-verify-change',
-  'onboard': 'openspec-onboard',
-  'propose': 'openspec-propose',
+  'explore': 'rd-explore',
+  'new': 'rd-new-change',
+  'continue': 'rd-continue-change',
+  'apply': 'rd-apply-change',
+  'ff': 'rd-ff-change',
+  'sync': 'rd-sync-specs',
+  'archive': 'rd-archive-change',
+  'bulk-archive': 'rd-bulk-archive-change',
+  'verify': 'rd-verify-change',
+  'onboard': 'rd-onboard',
+  'propose': 'rd-propose',
 };
 
 // -----------------------------------------------------------------------------
@@ -323,7 +323,7 @@ export class InitCommand {
       .map((toolId) => AI_TOOLS.find((t) => t.value === toolId)?.name || toolId);
 
     if (configuredNames.length > 0) {
-      console.log(`OpenSpec configured: ${configuredNames.join(', ')} (pre-selected)`);
+      console.log(`RdSpec configured: ${configuredNames.join(', ')} (pre-selected)`);
     }
 
     const detectedOnlyNames = detectedTools
@@ -468,7 +468,7 @@ export class InitCommand {
       return;
     }
 
-    const spinner = this.startSpinner('Creating OpenSpec structure...');
+    const spinner = this.startSpinner('Creating RdSpec structure...');
 
     const directories = [
       openspecPath,
@@ -483,7 +483,7 @@ export class InitCommand {
 
     spinner.stopAndPersist({
       symbol: PALETTE.white('▌'),
-      text: PALETTE.white('OpenSpec structure created'),
+      text: PALETTE.white('RdSpec structure created'),
     });
   }
 
@@ -637,7 +637,7 @@ export class InitCommand {
     configStatus: 'created' | 'exists' | 'skipped'
   ): void {
     console.log();
-    console.log(chalk.bold('OpenSpec Setup Complete'));
+    console.log(chalk.bold('RdSpec Setup Complete'));
     console.log();
 
     // Show created vs refreshed tools

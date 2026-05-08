@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getVerifyChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-verify-change',
+    name: 'rd-verify-change',
     description: '验证实现是否与变更制品匹配。当用户想在归档之前确认实现是完整的、正确的和一致的时使用。',
     instructions: `验证实现是否与变更制品（specs、tasks、design）匹配。
 

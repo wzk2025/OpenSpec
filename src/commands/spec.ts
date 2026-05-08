@@ -112,7 +112,7 @@ export class SpecCommand {
 export function registerSpecCommand(rootProgram: typeof program) {
   const specCommand = rootProgram
     .command('spec')
-    .description('管理和查看 OpenSpec 规格');
+    .description('管理和查看 RdSpec 规格');
 
   // Deprecation notice for noun-based commands
   specCommand.hook('preAction', () => {

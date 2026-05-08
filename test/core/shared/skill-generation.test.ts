@@ -24,17 +24,17 @@ describe('skill-generation', () => {
       const templates = getSkillTemplates();
       const dirNames = templates.map(t => t.dirName);
 
-      expect(dirNames).toContain('openspec-explore');
-      expect(dirNames).toContain('openspec-new-change');
-      expect(dirNames).toContain('openspec-continue-change');
-      expect(dirNames).toContain('openspec-apply-change');
-      expect(dirNames).toContain('openspec-ff-change');
-      expect(dirNames).toContain('openspec-sync-specs');
-      expect(dirNames).toContain('openspec-archive-change');
-      expect(dirNames).toContain('openspec-bulk-archive-change');
-      expect(dirNames).toContain('openspec-verify-change');
-      expect(dirNames).toContain('openspec-onboard');
-      expect(dirNames).toContain('openspec-propose');
+      expect(dirNames).toContain('rd-explore');
+      expect(dirNames).toContain('rd-new-change');
+      expect(dirNames).toContain('rd-continue-change');
+      expect(dirNames).toContain('rd-apply-change');
+      expect(dirNames).toContain('rd-ff-change');
+      expect(dirNames).toContain('rd-sync-specs');
+      expect(dirNames).toContain('rd-archive-change');
+      expect(dirNames).toContain('rd-bulk-archive-change');
+      expect(dirNames).toContain('rd-verify-change');
+      expect(dirNames).toContain('rd-onboard');
+      expect(dirNames).toContain('rd-propose');
     });
 
     it('should have valid template structure', () => {
@@ -83,7 +83,7 @@ describe('skill-generation', () => {
       const filtered = getSkillTemplates(['propose']);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].workflowId).toBe('propose');
-      expect(filtered[0].dirName).toBe('openspec-propose');
+      expect(filtered[0].dirName).toBe('rd-propose');
     });
   });
 
@@ -221,8 +221,8 @@ describe('skill-generation', () => {
       const content = generateSkillContent(template, '0.24.0');
 
       expect(content).toContain('license: MIT');
-      expect(content).toContain('compatibility: Requires openspec CLI.');
-      expect(content).toContain('author: openspec');
+      expect(content).toContain('compatibility: Requires rd CLI.');
+      expect(content).toContain('author: rd');
       expect(content).toContain('version: "1.0"');
       expect(content).toContain('generatedBy: "0.24.0"');
     });

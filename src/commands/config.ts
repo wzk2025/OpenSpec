@@ -84,7 +84,7 @@ const WORKFLOW_PROMPT_META: Record<string, WorkflowPromptMeta> = {
   },
   onboard: {
     name: 'Onboard',
-    description: 'Guided onboarding flow for OpenSpec',
+    description: 'Guided onboarding flow for RdSpec',
   },
 };
 
@@ -209,7 +209,7 @@ function maybeWarnConfigDrift(
 export function registerConfigCommand(program: Command): void {
   const configCmd = program
     .command('config')
-    .description('查看和修改全局 OpenSpec 配置')
+    .description('查看和修改全局 RdSpec 配置')
     .option('--scope <scope>', '配置范围（当前仅支持 "global"）')
     .hook('preAction', (thisCommand) => {
       const opts = thisCommand.opts();

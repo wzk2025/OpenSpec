@@ -779,7 +779,7 @@ E1 updated`);
       
       await expect(
         archiveCommand.execute('any-change', { yes: true })
-      ).rejects.toThrow("No OpenSpec changes directory found. Run 'rd init' first.");
+      ).rejects.toThrow("No RdSpec changes directory found. Run 'rd init' first.");
     });
   });
 

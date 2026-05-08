@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getOpsxProposeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-propose',
+    name: 'rd-propose',
     description: '创建新变更并一步生成所有制品。用于快速描述需求并生成完整的提案、设计、规格和任务。',
     instructions: `创建新变更并生成所有制品。所有提示消息使用中文。
 

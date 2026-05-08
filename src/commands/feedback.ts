@@ -65,7 +65,7 @@ function generateMetadata(): string {
   const timestamp = getTimestamp();
 
   return `---
-Submitted via OpenSpec CLI
+Submitted via RdSpec CLI
 - Version: ${version}
 - Platform: ${platform}
 - Timestamp: ${timestamp}`;

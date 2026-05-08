@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getExploreSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-explore',
+    name: 'rd-explore',
     description: '探索模式 - 深入思考、分析问题、梳理需求的思考伙伴。用于在变更前后进行探索性思考。',
     instructions: `进入探索模式。深入思考，自由可视化。所有提示消息使用中文。
 

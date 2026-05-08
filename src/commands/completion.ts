@@ -224,7 +224,7 @@ export class CompletionCommand {
       const configPath = configPaths[shell] || `${shell} configuration`;
 
       const confirmed = await confirm({
-        message: `Remove OpenSpec configuration from ${configPath}?`,
+        message: `Remove RdSpec configuration from ${configPath}?`,
         default: false,
       });
 

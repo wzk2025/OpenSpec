@@ -78,7 +78,7 @@ describe('UpdateCommand', () => {
       });
 
       await expect(updateCommand.execute(testDir)).rejects.toThrow(
-        "No OpenSpec directory found. Run 'rd init' first."
+        "No RdSpec directory found. Run 'rd init' first."
       );
     });
 
@@ -99,12 +99,12 @@ describe('UpdateCommand', () => {
     it('should update skill files for configured Claude tool', async () => {
       // Set up a configured Claude tool by creating skill directories
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      const exploreSkillDir = path.join(skillsDir, 'openspec-explore');
+      const exploreSkillDir = path.join(skillsDir, 'rd-explore');
       await fs.mkdir(exploreSkillDir, { recursive: true });
 
       // Create an existing skill file
       const oldSkillContent = `---
-name: openspec-explore (old)
+name: rd-explore (old)
 description: Old description
 license: MIT
 compatibility: Requires openspec CLI.
@@ -129,7 +129,7 @@ Old instructions content
         path.join(exploreSkillDir, 'SKILL.md'),
         'utf-8'
       );
-      expect(updatedSkill).toContain('name: openspec-explore');
+      expect(updatedSkill).toContain('name: rd-explore');
       expect(updatedSkill).not.toContain('Old instructions content');
       expect(updatedSkill).toContain('license: MIT');
 
@@ -146,11 +146,11 @@ Old instructions content
       const skillsDir = path.join(testDir, '.claude', 'skills');
 
       // Create at least one skill to mark tool as configured
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old content'
       );
 
@@ -158,10 +158,10 @@ Old instructions content
 
       // Verify core profile skill files were created/updated (propose, explore, apply, archive)
       const coreSkillNames = [
-        'openspec-explore',
-        'openspec-apply-change',
-        'openspec-archive-change',
-        'openspec-propose',
+        'rd-explore',
+        'rd-apply-change',
+        'rd-archive-change',
+        'rd-propose',
       ];
 
       for (const skillName of coreSkillNames) {
@@ -177,12 +177,12 @@ Old instructions content
 
       // Verify non-core skills are NOT created
       const nonCoreSkillNames = [
-        'openspec-new-change',
-        'openspec-continue-change',
-        'openspec-ff-change',
-        'openspec-sync-specs',
-        'openspec-bulk-archive-change',
-        'openspec-verify-change',
+        'rd-new-change',
+        'rd-continue-change',
+        'rd-ff-change',
+        'rd-sync-specs',
+        'rd-bulk-archive-change',
+        'rd-verify-change',
       ];
 
       for (const skillName of nonCoreSkillNames) {
@@ -197,11 +197,11 @@ Old instructions content
     it('should update opsx commands for configured Claude tool', async () => {
       // Set up a configured Claude tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old content'
       );
 
@@ -224,11 +224,11 @@ Old instructions content
     it('should update core profile opsx commands when tool is configured', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old content'
       );
 
@@ -258,11 +258,11 @@ Old instructions content
     it('should update multiple configured tools', async () => {
       // Set up Claude
       const claudeSkillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(claudeSkillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(claudeSkillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(claudeSkillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(claudeSkillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -277,10 +277,10 @@ Old instructions content
 
       // Verify Claude skills updated
       const claudeSkill = await fs.readFile(
-        path.join(claudeSkillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(claudeSkillsDir, 'rd-explore', 'SKILL.md'),
         'utf-8'
       );
-      expect(claudeSkill).toContain('name: openspec-explore');
+      expect(claudeSkill).toContain('name: rd-explore');
 
       consoleSpy.mockRestore();
     });
@@ -288,11 +288,11 @@ Old instructions content
     it('should update Claude tool with correct command format', async () => {
       // Set up Claude
       const claudeSkillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(claudeSkillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(claudeSkillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(claudeSkillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(claudeSkillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -319,11 +319,11 @@ Old instructions content
     it('should handle tool update failures gracefully', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -378,7 +378,7 @@ Old instructions content
         testDir,
         '.claude',
         'skills',
-        'openspec-archive-change'
+        'rd-archive-change'
       );
       await fs.mkdir(skillDir, { recursive: true });
       await fs.writeFile(path.join(skillDir, 'SKILL.md'), 'old');
@@ -400,18 +400,18 @@ Old instructions content
     it('should generate valid YAML frontmatter in skill files', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
       await updateCommand.execute(testDir);
 
       const skillContent = await fs.readFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'utf-8'
       );
 
@@ -430,18 +430,18 @@ Old instructions content
     it('should include proper instructions in skill files', async () => {
       // Set up a configured tool with apply-change skill (which is in core profile)
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-apply-change'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-apply-change'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-apply-change', 'SKILL.md'),
+        path.join(skillsDir, 'rd-apply-change', 'SKILL.md'),
         'old'
       );
 
       await updateCommand.execute(testDir);
 
       const skillContent = await fs.readFile(
-        path.join(skillsDir, 'openspec-apply-change', 'SKILL.md'),
+        path.join(skillsDir, 'rd-apply-change', 'SKILL.md'),
         'utf-8'
       );
 
@@ -454,11 +454,11 @@ Old instructions content
     it('should display success message with tool name', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -477,11 +477,11 @@ Old instructions content
     it('should suggest IDE restart after update', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -520,13 +520,13 @@ Old instructions content
     it('should detect update needed when generatedBy is missing', async () => {
       // Set up a configured tool without generatedBy
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         `---
-name: openspec-explore
+name: rd-explore
 metadata:
   author: openspec
   version: "1.0"
@@ -551,13 +551,13 @@ Legacy content without generatedBy
     it('should detect update needed when version differs', async () => {
       // Set up a configured tool with old version
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         `---
-name: openspec-explore
+name: rd-explore
 metadata:
   generatedBy: "0.1.0"
 ---
@@ -581,18 +581,18 @@ Old version content
     it('should embed generatedBy in updated skill files', async () => {
       // Set up a configured tool without generatedBy
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old content without version'
       );
 
       await updateCommand.execute(testDir);
 
       const updatedContent = await fs.readFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'utf-8'
       );
 
@@ -605,13 +605,13 @@ Old version content
     it('should update when force is true even if up to date', async () => {
       // Set up a configured tool with current version
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
 
       const { version } = await import('../../package.json');
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         `---
 metadata:
   generatedBy: "${version}"
@@ -642,11 +642,11 @@ Content
     it('should not show --force hint when force is used', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old content'
       );
 
@@ -673,11 +673,11 @@ Content
     it('should show version in success message', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -700,11 +700,11 @@ Content
     it('should detect and auto-cleanup legacy files with --force flag', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -725,12 +725,12 @@ ${OPENSPEC_MARKERS.end}
 
       // Should show v1 upgrade message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Upgrading to the new OpenSpec')
+        expect.stringContaining('Upgrading to the new RdSpec')
       );
 
       // Should show marker removal message (config files are never deleted, only have markers removed)
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Removed OpenSpec markers from CLAUDE.md')
+        expect.stringContaining('Removed RdSpec markers from CLAUDE.md')
       );
 
       // Config file should still exist (never deleted)
@@ -750,11 +750,11 @@ ${OPENSPEC_MARKERS.end}
     it('should warn but continue with update when legacy files found in non-interactive mode', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -772,7 +772,7 @@ ${OPENSPEC_MARKERS.end}
 
       // Should show v1 upgrade message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Upgrading to the new OpenSpec')
+        expect.stringContaining('Upgrading to the new RdSpec')
       );
 
       // Should show warning about --force
@@ -797,11 +797,11 @@ ${OPENSPEC_MARKERS.end}
     it('should cleanup legacy slash command directories with --force', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -834,11 +834,11 @@ ${OPENSPEC_MARKERS.end}
     it('should cleanup legacy openspec/AGENTS.md with --force', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -871,11 +871,11 @@ ${OPENSPEC_MARKERS.end}
     it('should not show legacy cleanup messages when no legacy files exist', async () => {
       // Set up a configured tool with no legacy files
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -898,11 +898,11 @@ ${OPENSPEC_MARKERS.end}
     it('should remove OpenSpec marker block from mixed content files', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), {
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), {
         recursive: true,
       });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old'
       );
 
@@ -929,7 +929,7 @@ More user content after markers.
 
       // Should show marker removal message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Removed OpenSpec markers from CLAUDE.md')
+        expect.stringContaining('Removed RdSpec markers from CLAUDE.md')
       );
 
       // File should still exist
@@ -988,7 +988,7 @@ More user content after markers.
       );
 
       // Skills should be created
-      const skillFile = path.join(testDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
+      const skillFile = path.join(testDir, '.claude', 'skills', 'rd-explore', 'SKILL.md');
       const skillExists = await FileSystemUtils.fileExists(skillFile);
       expect(skillExists).toBe(true);
 
@@ -1002,9 +1002,9 @@ More user content after markers.
     it('should not upgrade legacy tools already configured', async () => {
       // Set up a configured Claude tool with skills
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'existing skill'
       );
 
@@ -1047,9 +1047,9 @@ More user content after markers.
     it('should not show getting started message when no new tools configured', async () => {
       // Set up a configured tool (no legacy artifacts)
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         'old skill'
       );
 
@@ -1083,10 +1083,10 @@ More user content after markers.
 
       // Default profile is core, so only core workflows should be generated.
       const skillNames = [
-        'openspec-propose',
-        'openspec-explore',
-        'openspec-apply-change',
-        'openspec-archive-change',
+        'rd-propose',
+        'rd-explore',
+        'rd-apply-change',
+        'rd-archive-change',
       ];
 
       const skillsDir = path.join(testDir, '.claude', 'skills');
@@ -1096,7 +1096,7 @@ More user content after markers.
         expect(exists).toBe(true);
       }
 
-      const nonCoreSkill = path.join(skillsDir, 'openspec-new-change', 'SKILL.md');
+      const nonCoreSkill = path.join(skillsDir, 'rd-new-change', 'SKILL.md');
       expect(await FileSystemUtils.fileExists(nonCoreSkill)).toBe(false);
     });
 
@@ -1138,10 +1138,10 @@ More user content after markers.
 
       const skillsDir = path.join(testDir, '.claude', 'skills');
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md')
+        path.join(skillsDir, 'rd-explore', 'SKILL.md')
       )).toBe(true);
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-propose', 'SKILL.md')
+        path.join(skillsDir, 'rd-propose', 'SKILL.md')
       )).toBe(false);
 
       const commandsDir = path.join(testDir, '.claude', 'commands', 'rd');
@@ -1166,25 +1166,25 @@ More user content after markers.
 
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       await updateCommand.execute(testDir);
 
       // Should create explore and new skills
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md')
+        path.join(skillsDir, 'rd-explore', 'SKILL.md')
       )).toBe(true);
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-new-change', 'SKILL.md')
+        path.join(skillsDir, 'rd-new-change', 'SKILL.md')
       )).toBe(true);
 
       // Should NOT create non-profile skills
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-apply-change', 'SKILL.md')
+        path.join(skillsDir, 'rd-apply-change', 'SKILL.md')
       )).toBe(false);
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-propose', 'SKILL.md')
+        path.join(skillsDir, 'rd-propose', 'SKILL.md')
       )).toBe(false);
     });
 
@@ -1196,14 +1196,14 @@ More user content after markers.
       });
 
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       await updateCommand.execute(testDir);
 
       // Skills should be created
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md')
+        path.join(skillsDir, 'rd-explore', 'SKILL.md')
       )).toBe(true);
 
       // Commands should NOT be created
@@ -1221,8 +1221,8 @@ More user content after markers.
       });
 
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       await updateCommand.execute(testDir);
 
@@ -1234,7 +1234,7 @@ More user content after markers.
 
       // Skills should be removed for commands-only delivery
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md')
+        path.join(skillsDir, 'rd-explore', 'SKILL.md')
       )).toBe(false);
     });
 
@@ -1246,13 +1246,13 @@ More user content after markers.
       });
 
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
       const packageJsonPath = path.join(process.cwd(), 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as { version: string };
       await fs.writeFile(
-        path.join(skillsDir, 'openspec-explore', 'SKILL.md'),
+        path.join(skillsDir, 'rd-explore', 'SKILL.md'),
         `---
-name: openspec-explore
+name: rd-explore
 metadata:
   generatedBy: "${packageJson.version}"
 ---
@@ -1314,12 +1314,12 @@ content
 
       // Set up tool with extra workflows beyond core profile
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       // Add a non-core workflow
-      await fs.mkdir(path.join(skillsDir, 'openspec-new-change'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-new-change', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-new-change'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-new-change', 'SKILL.md'), 'old');
       const extraCommandFile = path.join(testDir, '.claude', 'commands', 'rd', 'new.md');
       await fs.mkdir(path.dirname(extraCommandFile), { recursive: true });
       await fs.writeFile(extraCommandFile, 'old');
@@ -1330,7 +1330,7 @@ content
 
       // Deselected workflow artifacts should be removed for both delivery surfaces.
       expect(await FileSystemUtils.fileExists(
-        path.join(skillsDir, 'openspec-new-change', 'SKILL.md')
+        path.join(skillsDir, 'rd-new-change', 'SKILL.md')
       )).toBe(false);
       expect(await FileSystemUtils.fileExists(extraCommandFile)).toBe(false);
 
@@ -1351,8 +1351,8 @@ content
     it('should not show new tool message when no new tools detected', async () => {
       // Set up a configured tool (only Claude, no other tool directories)
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       const consoleSpy = vi.spyOn(console, 'log');
 
@@ -1374,10 +1374,10 @@ content
     it('should detect installed workflows across tools', async () => {
       // Create skills for Claude
       const claudeSkillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(claudeSkillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(claudeSkillsDir, 'openspec-explore', 'SKILL.md'), 'content');
-      await fs.mkdir(path.join(claudeSkillsDir, 'openspec-apply-change'), { recursive: true });
-      await fs.writeFile(path.join(claudeSkillsDir, 'openspec-apply-change', 'SKILL.md'), 'content');
+      await fs.mkdir(path.join(claudeSkillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(claudeSkillsDir, 'rd-explore', 'SKILL.md'), 'content');
+      await fs.mkdir(path.join(claudeSkillsDir, 'rd-apply-change'), { recursive: true });
+      await fs.writeFile(path.join(claudeSkillsDir, 'rd-apply-change', 'SKILL.md'), 'content');
 
       const workflows = scanInstalledWorkflows(testDir, ['claude']);
       expect(workflows).toContain('explore');
@@ -1413,8 +1413,8 @@ content
   describe('tools output', () => {
     it('should list affected tools in output', async () => {
       const skillsDir = path.join(testDir, '.claude', 'skills');
-      await fs.mkdir(path.join(skillsDir, 'openspec-explore'), { recursive: true });
-      await fs.writeFile(path.join(skillsDir, 'openspec-explore', 'SKILL.md'), 'old');
+      await fs.mkdir(path.join(skillsDir, 'rd-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'rd-explore', 'SKILL.md'), 'old');
 
       const consoleSpy = vi.spyOn(console, 'log');
 

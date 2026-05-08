@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-bulk-archive-change',
+    name: 'rd-bulk-archive-change',
     description: '批量归档已完成的变更。适用于归档多个并行变更。',
     instructions: `批量归档多个已完成的变更。
 
@@ -122,7 +122,7 @@ export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
    按确定的顺序处理变更（遵循冲突解决方案）：
 
    a. **同步规格**（如果存在增量规格）：
-      - 使用 openspec-sync-specs 方式（代理驱动的智能合并）
+      - 使用 rd-sync-specs 方式（代理驱动的智能合并）
       - 对于冲突，按已解决的顺序应用
       - 跟踪是否已同步
 
@@ -369,7 +369,7 @@ export function getOpsxBulkArchiveCommandTemplate(): CommandTemplate {
    按确定的顺序处理变更（遵循冲突解决方案）：
 
    a. **同步规格**（如果存在增量规格）：
-      - 使用 openspec-sync-specs 方式（代理驱动的智能合并）
+      - 使用 rd-sync-specs 方式（代理驱动的智能合并）
       - 对于冲突，按已解决的顺序应用
       - 跟踪是否已同步
 

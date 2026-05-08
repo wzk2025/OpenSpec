@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getSyncSpecsSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-sync-specs',
+    name: 'rd-sync-specs',
     description: '将变更中的 delta specs 同步到主线 specs。当用户想要在不归档变更的情况下用 delta spec 的内容更新主线 specs 时使用。',
     instructions: `将变更中的 delta specs 同步到主线 specs。
 

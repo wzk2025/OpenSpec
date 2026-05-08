@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
-    name: 'openspec-apply-change',
+    name: 'rd-apply-change',
     description: '实施变更中的任务。用于启动实施、继续实施或逐项完成任务。',
     instructions: `实施变更中的任务。所有提示消息使用中文。
 
@@ -46,7 +46,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    - 基于当前状态的动态指令
 
    **处理状态：**
-   - 如果 \`state: "blocked"\`（缺少 artifact）：显示提示信息，建议使用 openspec-continue-change
+   - 如果 \`state: "blocked"\`（缺少 artifact）：显示提示信息，建议使用 rd-continue-change
    - 如果 \`state: "all_done"\`：表示祝贺，建议归档
    - 否则：继续实施
 
