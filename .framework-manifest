@@ -1,0 +1,22 @@
+# .framework-manifest — framework file inventory
+# setup-harness.sh reads this to know what to manage
+# Everything NOT listed here is project territory (never touched by upgrades)
+# Format: d <path> = directory (all contents framework-owned)
+#         f <path> = single file
+
+# ── Directories ──
+d .claude/agents
+d .claude/ci-templates
+d .claude/commands
+d .claude/hooks
+d .claude/reference
+d .claude/skills
+d .claude/tools/scripts
+d .claude/workflows
+
+# ── Files (distributed to target projects) ──
+f .claude/settings.json
+f .claude/.harness-version
+f AI-TEAM.md
+f harness
+f .framework-manifest
