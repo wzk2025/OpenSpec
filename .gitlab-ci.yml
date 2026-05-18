@@ -1,0 +1,16 @@
+# 由 rd_harness ci-setup-project.sh 自动生成
+# 语言：ts | rd_harness ref：1.8.0
+
+include:
+  - project: 'public_group/rd_harness'
+    ref: 1.8.0
+    file: '.claude/ci-templates/base.yml'
+  - project: 'public_group/rd_harness'
+    ref: 1.8.0
+    file: '.claude/ci-templates/languages/ts.yml'
+  - project: 'public_group/rd_harness'
+    ref: 1.8.0
+    file: '.claude/ci-templates/check-build.yml'
+  - project: 'public_group/rd_harness'
+    ref: 1.8.0
+    file: '.claude/ci-templates/ai-pipeline.yml'
